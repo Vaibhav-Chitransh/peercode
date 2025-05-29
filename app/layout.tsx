@@ -50,7 +50,7 @@ export default function RootLayout({
             },
           }}
         >
-          <header className="flex justify-end items-center p-4 gap-4 h-16">
+          <header className="flex items-center justify-end h-16 p-4 gap-4">
             <SignedOut>
               <SignInButton />
               <SignUpButton />
