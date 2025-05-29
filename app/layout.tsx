@@ -49,15 +49,13 @@ export default function RootLayout({
               footerActionLink: "primary-text-gradient hover-text-primary-500",
             },
           }}
+          afterSignOutUrl='/'
         >
           <header className="flex items-center justify-end h-16 p-4 gap-4">
             <SignedOut>
               <SignInButton />
               <SignUpButton />
             </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
           </header>
           <ThemeProvider>{children}</ThemeProvider>
         </ClerkProvider>
