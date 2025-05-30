@@ -1,8 +1,8 @@
 "use client"
-import { sidebarLinks } from "@/constants";
+import { sidebarLinks } from "@/constants/index";
 import React from "react";
 import { SheetClose } from "../ui/sheet";
-import { Link } from "lucide-react";
+import  Link  from "next/link";
 import Image from "next/image";
 
 import { usePathname } from "next/navigation";

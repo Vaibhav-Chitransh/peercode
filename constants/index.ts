@@ -1,7 +1,15 @@
 import SunImage from "@/assets/icons/sun.svg";
 import MoonImage from "@/assets/icons/moon.svg";
 import ComputerImage from "@/assets/icons/computer.svg";
+import HomeIcon from "@/assets/icons/home.svg";
+import UsersIcon from "@/assets/icons/users.svg";
 import { SidebarLink } from "@/types/";
+import UserIcon from "@/assets/icons/user.svg";
+import TagIcon from "@/assets/icons/tag.svg";
+import SuitcaseIcon from "@/assets/icons/suitcase.svg";
+import StarIcon from "@/assets/icons/star.svg";
+import QuestionIcon from "@/assets/icons/question.svg"; 
+
 
 export const themes = [
   {
@@ -23,37 +31,37 @@ export const themes = [
 
 export const sidebarLinks: SidebarLink[] = [
   {
-    imgURL: "/assets/icons/home.svg",
+    imgURL: HomeIcon,
     route: "/",
     label: "Home",
   },
   {
-    imgURL: "/assets/icons/users.svg",
+    imgURL: UsersIcon,
     route: "/community",
     label: "Community",
   },
   {
-    imgURL: "/assets/icons/star.svg",
+    imgURL: StarIcon,
     route: "/collection",
     label: "Collections",
   },
   {
-    imgURL: "/assets/icons/suitcase.svg",
+    imgURL: SuitcaseIcon,
     route: "/jobs",
     label: "Find Jobs",
   },
   {
-    imgURL: "/assets/icons/tag.svg",
+    imgURL: TagIcon,
     route: "/tags",
     label: "Tags",
   },
   {
-    imgURL: "/assets/icons/user.svg",
+    imgURL: UserIcon,
     route: "/profile",
     label: "Profile",
   },
   {
-    imgURL: "/assets/icons/question.svg",
+    imgURL: QuestionIcon,
     route: "/ask-question",
     label: "Ask a question",
   },
