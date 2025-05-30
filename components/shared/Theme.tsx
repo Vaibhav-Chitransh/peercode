@@ -23,11 +23,12 @@ const Theme = () => {
           <MenubarTrigger className="focus:bg-light-900 data-[state=open]:bg-light-900 dark:focus:bg-dark-200 dark:data-[state=open]:bg-dark-200">
             {mode === "light" ? (
               <Image
+                
                 src={SunImage}
                 alt="sun"
                 width={20}
                 height={20}
-                className="active-theme"
+                className="active-theme cursor-pointer"
               />
             ) : (
               <Image
@@ -35,7 +36,7 @@ const Theme = () => {
                 alt="moon"
                 width={20}
                 height={20}
-                className="active-theme"
+                className="active-theme cursor-pointer"
               />
             )}
           </MenubarTrigger>
@@ -43,7 +44,15 @@ const Theme = () => {
             {themes.map((theme) => (
               <MenubarItem
                 key={theme.value}
-                onClick={() => setMode(theme.value)}
+                className="flex items-center gap-4 px-2.5 py-2 dark:focus:bg-dark-400 cursor-pointer"
+                onClick={
+                  () =>{ setMode(theme.value)
+                  if(theme.value!=='system'){
+                    localStorage.theme=theme.value
+                  }else{
+                      localStorage.removeItem('theme'); 
+                  }}
+                }
               >
                 <Image
                   src={theme.icon}
@@ -52,7 +61,7 @@ const Theme = () => {
                   height={20}
                   className={`${mode === theme.value && "active-theme"}`}
                 />
-                {theme.label}
+                <p className={`body-semibold text-light-500 ${mode===theme.value?'text-primary-500':'text-dark100_light900'}`}>{theme.label}</p>
               </MenubarItem>
             ))}
           </MenubarContent>
