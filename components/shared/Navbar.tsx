@@ -3,6 +3,8 @@ import React from "react";
 import Image from "next/image";
 import { SignedIn, UserButton } from "@clerk/nextjs";
 import Theme from "./Theme";
+import MobileNav from "./MobileNav";
+import GlobalSearch from "./search/GlobalSearch";
 
 const Navbar = () => {
   return (
@@ -10,10 +12,10 @@ const Navbar = () => {
       <Link href="/" className="flex items-center gap-1">
         <Image src="/globe.svg" width={23} height={23} alt="peercode" />
         <p className="h2-bold font-spaceGrotesk text-dark-100 dark:text-light-900 max-sm:hidden">
-          Peer <span className="text-primary-500"> Code</span>
+          Peer<span className="text-primary-500">Code</span>
         </p>
       </Link>
-      Global Search
+       <GlobalSearch/>
       <div className="flex-between gap-5">
         <Theme />
         <SignedIn>
@@ -25,7 +27,7 @@ const Navbar = () => {
           />
         </SignedIn>
 
-        MobileNav
+        <MobileNav />
       </div>
     </nav>
   );
