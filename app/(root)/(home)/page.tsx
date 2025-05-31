@@ -21,10 +21,10 @@ const questions = [
       name: "Vaibhav Chitransh",
       picture: "https://example.com/vaibhav.jpg",
     },
-    upvotes: 10,
-    views: 100,
-    answers: 2,
-    createdAt: new Date("2023-10-01T12:00:00Z"),
+    upvotes: 43791,
+    views: 10000,
+    answers: [],
+    createdAt: new Date("2024-10-01T12:00:00Z"),
   },
   {
     _id: 2,
@@ -35,13 +35,13 @@ const questions = [
     ],
     author: {
       _id: "a2",
-      name: "John Doe",
+      name: "Naveen Chhipa",
       picture: "https://example.com/john.jpg",
     },
     upvotes: 15,
     views: 780,
-    answers: 8,
-    createdAt: new Date("2023-10-01T12:00:00Z"),
+    answers: [],
+    createdAt: new Date("2025-04-01T12:00:00Z"),
   },
 ];
 

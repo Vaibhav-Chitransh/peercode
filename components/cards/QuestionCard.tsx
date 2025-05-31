@@ -1,6 +1,11 @@
 import Link from "next/link";
 import React from "react";
 import Metric from "../shared/Metric";
+import LikeIcon from "@/assets/icons/like.svg";
+import MessageIcon from "../../assets/icons/message.svg";
+import EyeIcon from "../../assets/icons/eye.svg";
+import AvatarIcon from "../../assets/icons/avatar.svg";
+import { formatNumber, getTimeStamp } from "@/lib/utils";
 
 interface QuestionProps {
   _id: number;
@@ -9,7 +14,7 @@ interface QuestionProps {
   author: { _id: string; name: string; picture: string };
   upvotes: number;
   views: number;
-  answers: number;
+  answers: [];
   createdAt: Date;
 }
 
@@ -28,7 +33,7 @@ const QuestionCard = ({
       <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
         <div>
           <span className="subtle-regular text-dark400_light700 line-clamp-1 flex sm:hidden">
-            {String(createdAt)}
+            {getTimeStamp(createdAt)}
           </span>
           <Link href={`/question/${_id}`}>
             <h3 className="sm:h3-semibold base-semibold text-dark200_light900 line-clamp-1 flex-1">
@@ -43,7 +48,39 @@ const QuestionCard = ({
       </div>
 
       <div className="flex-between mt-6 w-full flex-wrap gap-3">
-        <Metric  />
+        <Metric
+          imgUrl={AvatarIcon}
+          alt="user"
+          value={author.name}
+          title={` - asked ${getTimeStamp(createdAt)}`}
+          href={`/profile/${author._id}`}
+          isAuthor
+          textStyles="small-medium text-dark400_light800"
+        />
+
+        <Metric
+          imgUrl={LikeIcon}
+          alt="Upvotes"
+          value={formatNumber(upvotes)}
+          title="Votes"
+          textStyles="small-medium text-dark400_light800"
+        />
+
+        <Metric
+          imgUrl={MessageIcon}
+          alt="message"
+          value={answers.length}
+          title="Answers"
+          textStyles="small-medium text-dark400_light800"
+        />
+
+        <Metric
+          imgUrl={EyeIcon}
+          alt="eye"
+          value={formatNumber(views)}
+          title="Views"
+          textStyles="small-medium text-dark400_light800"
+        />
       </div>
     </div>
   );
