@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 const NavContent = () => {
   const pathName=usePathname();
   return (
-    <section className="flex h-full flex-col gap-6 pt-16 ">
+    <section className="flex h-full flex-col gap-6  pt-16 ">
       {sidebarLinks.map((item) => {
         const isActive=(pathName.includes(item.route) && item.route.length>1) || pathName===item.route;
         return (
