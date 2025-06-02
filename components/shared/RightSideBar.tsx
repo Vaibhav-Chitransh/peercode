@@ -57,53 +57,63 @@ const popularTags = [
     id: 5,
     name: "redux",
     totalQuestions: 7,
-  }
+  },
+  {
+    id: 6,
+    name: "nodejs",
+    totalQuestions: 7,
+  },
+  {
+    id: 7,
+    name: "expressjs",
+    totalQuestions: 7,
+  },
 ];
 
 const RightSideBar = () => {
   return (
-    <section className="background-light900_dark200 light-border custom-scrollbar sticky left-0 right-0 flex h-screen flex-col overflow-y-auto border-l p-6 pt-36 shadow-light-300 dark:shadow-none max-xl:hidden lg:w-[350px]">
-      {/*
-        This div is for TOP QUESTIONS
-      */}
-      <div>
-        <h3 className="h3-bold text-dark200_light900"> Top Questions</h3>
-        <div className="mt-7 flex w-full flex-col gap-[30px]">
-          {hotQuestions.map((question) => (
-            <Link
-              href={`/questions/${question.id}`}
-              key={question.id}
-              className="flex cursor-pointer items-center justify-between gap-7"
-            >
-              <p className="text-dark500_light700 text-[11px] ">
-                {question.title}
-              </p>
-
-              <Image
-                src={ChevronrRightIcon}
-                alt="chevron right"
-                width={20}
-                height={20}
-                className="invert-colors"
-              />
-            </Link>
-          ))}
+    <section className="background-light900_dark200 light-border custom-scrollbar sticky right-0 box-border flex h-screen min-w-0 max-w-[100vw] flex-col overflow-x-hidden border-l p-6 pt-8 shadow-light-300 dark:shadow-none max-xl:hidden lg:w-[400px]">
+      <div className="flex min-h-0 w-full flex-1 flex-col overflow-y-auto overflow-x-hidden">
+        {/*
+          This div is for TOP QUESTIONS
+        */}
+        <div>
+          <h3 className="h3-bold text-dark200_light900"> Top Questions</h3>
+          <div className="mt-7 flex w-full flex-col gap-[30px] overflow-x-hidden">
+            {hotQuestions.map((question) => (
+              <Link
+                href={`/questions/${question.id}`}
+                key={question.id}
+                className="flex w-full min-w-0 cursor-pointer items-center justify-between gap-7 overflow-x-hidden"
+              >
+                <p className="text-dark500_light700 w-full min-w-0 truncate text-[11px]">
+                  {question.title}
+                </p>
+                <Image
+                  src={ChevronrRightIcon}
+                  alt="chevron right"
+                  width={20}
+                  height={20}
+                  className="invert-colors shrink-0"
+                />
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="mt-16">
-        <h3 className="h3-bold text-dark200_light900"> Popular Tags</h3>
-
-        <div className="mt-7 flex flex-col gap-4">
-          {popularTags.map((tag) => (
-            <RenderTag
-              key={tag.id}
-              id={tag.id}
-              name={tag.name}
-              totalQuestions={tag.totalQuestions}
-              showCount
-            />
-          ))}
+        <div className="mt-10">
+          <h3 className="h3-bold text-dark200_light900"> Popular Tags</h3>
+          <div className="mt-7 flex w-full flex-col gap-4 overflow-x-hidden">
+            {popularTags.map((tag) => (
+              <RenderTag
+                key={tag.id}
+                id={tag.id}
+                name={tag.name}
+                totalQuestions={tag.totalQuestions}
+                showCount
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>

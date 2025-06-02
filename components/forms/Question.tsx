@@ -19,6 +19,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import CloseIcon from "../../assets/icons/close.svg";
+import { Badge } from "../ui/badge";
 
 const type: any = "create";
 
@@ -39,14 +40,12 @@ const Question = () => {
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof QuestionsSchema>) {
     setIsSubmitting(true);
-    
+
     try {
       // make an async call to your API -> create a question
       // contain all form data
-
       // navigate to home page
     } catch (error) {
-      
     } finally {
       setIsSubmitting(false);
     }
@@ -98,12 +97,12 @@ const Question = () => {
           name="title"
           render={({ field }) => (
             <FormItem className="flex w-full flex-col ">
-              <FormLabel className="paragraph-semibold text-dark400_light800">
+              <FormLabel className="paragraph-semibold text-dark400_light900 peer-disabled:opacity-70 peer-disabled:dark:text-light-700">
                 Question Title<span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl className="mt-3.5">
                 <Input
-                  className="no-focus paragraph-regular text-dark300_light700 background-light900_dark300 border light-border-2 rounded-[6px] min-h-[56px]"
+                  className="no-focus paragraph-regular text-dark300_light700 background-light900_dark300 light-border-2 min-h-[56px] rounded-[6px] border"
                   {...field}
                 />
               </FormControl>
@@ -121,7 +120,7 @@ const Question = () => {
           name="explanation"
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
-              <FormLabel className="paragraph-semibold text-dark400_light800">
+              <FormLabel className="paragraph-semibold text-dark400_light900 peer-disabled:opacity-70 peer-disabled:dark:text-light-700">
                 Detailed explanation of your problem
                 <span className="text-primary-500">*</span>
               </FormLabel>
@@ -175,28 +174,38 @@ const Question = () => {
           name="tags"
           render={({ field }) => (
             <FormItem className="flex w-full flex-col ">
-              <FormLabel className="paragraph-semibold text-dark400_light800">
+              <FormLabel className="paragraph-semibold text-dark400_light900 peer-disabled:opacity-70 peer-disabled:dark:text-light-700">
                 Tags<span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl className="mt-3.5">
-                <>
+                <div>
                   <Input
-                    className="no-focus paragraph-regular text-dark300_light700 background-light900_dark300 border light-border-2 rounded-[6px] min-h-[56px] placeholder:text-gray-400"
+                    className="no-focus paragraph-regular text-dark300_light700 background-light900_dark300 light-border-2 min-h-[56px] rounded-[6px] border placeholder:text-gray-400"
                     placeholder="Add tags..."
                     onKeyDown={(e) => handleInputKeyDown(e, field)}
                   />
 
                   {field.value.length > 0 && (
                     <div className="flex-start mt-2.5 gap-2.5">
-                      {/* {field.value.map((tag : any) => (
-                            <Badge key={tag} className="subtle-medium background-light800_dark300 text-light400_light500 flex items-center justify-center gap-2 rounded-md border-none px-4 py-2 capitalize" onClick={() => handleTagRemove(tag, field)}>
-                                {tag}
-                                <Image src={CloseIcon} alt="close icon" width={12} height={12} className="cursor-pointer object-contain invert-0 dark:invert" />
-                            </Badge>
-                        ))} */}
+                      {field.value.map((tag: any) => (
+                        <Badge
+                          key={tag}
+                          className="subtle-medium background-light800_dark300 text-light400_light500 flex items-center justify-center gap-2 rounded-[5px] border-none px-4 py-2 capitalize"
+                          onClick={() => handleTagRemove(tag, field)}
+                        >
+                          {tag}
+                          <Image
+                            src={CloseIcon}
+                            alt="close icon"
+                            width={12}
+                            height={12}
+                            className="cursor-pointer object-contain invert-0 dark:invert"
+                          />
+                        </Badge>
+                      ))}
                     </div>
                   )}
-                </>
+                </div>
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
                 Add upto 3 tags to describe what your question is about. You
@@ -208,7 +217,7 @@ const Question = () => {
         />
         <Button
           type="submit"
-          className="primary-gradient w-fit !text-light-900 rounded-[5px]"
+          className="primary-gradient w-fit rounded-[5px] !text-light-900"
           disabled={isSubmitting}
         >
           {isSubmitting
@@ -216,8 +225,8 @@ const Question = () => {
               ? "Editing..."
               : "Posting..."
             : type === "edit"
-            ? "Edit Question"
-            : "Ask a Question"}
+              ? "Edit Question"
+              : "Ask a Question"}
         </Button>
       </form>
     </Form>

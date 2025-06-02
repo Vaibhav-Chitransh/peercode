@@ -5,11 +5,11 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "../ui/button";
-import { SignedOut } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignOutButton } from "@clerk/nextjs";
 const LeftSideBar = () => {
   const pathName = usePathname();
   return (
-    <section className="background-light900_dark200 light-border custom-scrollbar sticky left-0 top-0 flex h-screen flex-col justify-between overflow-y-auto border-r p-6 pt-36 shadow-light-300 dark:shadow-none max-sm:hidden lg:w-[266px]">
+    <section className="background-light900_dark200 light-border custom-scrollbar sticky left-0 top-0 flex h-screen flex-col justify-between overflow-y-auto border-r p-6 pt-8 shadow-light-300 dark:shadow-none max-sm:hidden lg:w-[266px]">
       <div className="flex flex-1 flex-col gap-6 ">
         {sidebarLinks.map((item) => {
           const isActive =
@@ -22,7 +22,7 @@ const LeftSideBar = () => {
             <Link
               key={item.route}
               href={item.route}
-              className={`${isActive ? "primary-gradient rounded-lg text-light-900" : "text-dark300_light900"} flex items-center justify-start gap-4 bg-transparent p-4`}
+              className={`${isActive ? "primary-gradient rounded-[8px] text-light-900" : "text-dark300_light900"} flex items-center justify-start gap-4 bg-transparent p-4`}
             >
               <Image
                 src={item.imgURL}
@@ -32,18 +32,19 @@ const LeftSideBar = () => {
                 className={`${isActive ? "" : "invert-colors"}`}
               />
               <p
-                className={`${isActive ? "base-bold" : "base-medium "} max-lg:hidden`}
+                className={`${isActive ? "base-bold" : "base-medium"} max-md:hidden`}
               >
                 {item.label}
               </p>
             </Link>
+            
           );
         })}
       </div>
-          {/*
+      {/*
             If the user is signed out , then only it shows the login/sign-up button
           */}
-      <SignedOut>
+      {/* <SignedOut>
         <div className="flex flex-col gap-3">
           <Link href="/sign-in">
             <Button className="small-medium btn-secondary min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
@@ -53,8 +54,11 @@ const LeftSideBar = () => {
                 width={20}
                 height={20}
                 className="invert-colors lg:hidden"
-               />
-              <span className="primary-text-gradient max-lg:hidden"> Log In</span>
+              />
+              <span className="primary-text-gradient max-lg:hidden">
+                {" "}
+                Log In
+              </span>
             </Button>
           </Link>
 
@@ -66,13 +70,13 @@ const LeftSideBar = () => {
                 width={20}
                 height={20}
                 className="invert-colors lg:hidden" //for large devices it is hidden
-               />
+              />
               <span className="max-lg:hidden"> Sign up </span>
-              
             </Button>
           </Link>
         </div>
-      </SignedOut>
+      </SignedOut> */}
+      
     </section>
 
     // At small devices it only shows the icnos , otherwise it shows the content too

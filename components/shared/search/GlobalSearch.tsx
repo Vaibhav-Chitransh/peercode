@@ -1,10 +1,11 @@
-import React from "react";
+"use client" // temporary
+import React, { useState } from "react";
 import Image from "next/image";
 
 import SearchImage from "../../../assets/icons/search.svg";
-import { Input } from "@/components/ui/input"
 
 const GlobalSearch = () => {
+  const [val, setVal] = useState<string>("");  // temporary purpose
   return (
     <div className="relative w-full max-w-[600px] max-lg:hidden">
       <div className="background-light800_darkgradient relative flex min-h-[56px] grow items-center gap-1 rounded-xl px-4">
@@ -16,11 +17,12 @@ const GlobalSearch = () => {
             className="cursor-pointer"
 
         />
-        <Input  
+        <input  
             type="text"
             placeholder="Search  globally"
-            value=""
-            className="paragraph-regular no-focus placeholder background-light800_darkgradient border-none shadow-none outline-none"
+            value={val}
+            onChange={(e) => setVal(e.target.value)}
+            className="paragraph-regular no-focus placeholder background-light800_darkgradient border-none shadow-none outline-none placeholder:text-gray-500"
         />
 
       </div>
