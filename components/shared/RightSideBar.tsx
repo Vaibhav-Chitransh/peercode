@@ -86,9 +86,10 @@ const RightSideBar = () => {
                 key={question.id}
                 className="flex w-full min-w-0 cursor-pointer items-center justify-between gap-7 overflow-x-hidden"
               >
-                <p className="text-dark500_light700 w-full min-w-0 truncate text-[11px]">
+                <p className="text-dark500_light700 w-full text-[13px] leading-snug">
                   {question.title}
                 </p>
+
                 <Image
                   src={ChevronrRightIcon}
                   alt="chevron right"
