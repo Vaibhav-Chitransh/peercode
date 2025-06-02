@@ -43,8 +43,75 @@ const questions = [
     answers: [],
     createdAt: new Date("2025-04-01T12:00:00Z"),
   },
+  {
+    _id: 3,
+    title: "How to center a div?",
+    tags: [
+      { _id: "3", name: "css" },
+      { _id: "4", name: "html" },
+    ],
+    author: {
+      _id: "a2",
+      name: "Naveen Chhipa",
+      picture: "https://example.com/john.jpg",
+    },
+    upvotes: 15,
+    views: 780,
+    answers: [],
+    createdAt: new Date("2025-04-01T12:00:00Z"),
+  },
+  {
+    _id: 4,
+    title: "How to center a div?",
+    tags: [
+      { _id: "3", name: "css" },
+      { _id: "4", name: "html" },
+    ],
+    author: {
+      _id: "a2",
+      name: "Naveen Chhipa",
+      picture: "https://example.com/john.jpg",
+    },
+    upvotes: 15,
+    views: 780,
+    answers: [],
+    createdAt: new Date("2025-04-01T12:00:00Z"),
+  },
+  {
+    _id: 5,
+    title: "How to center a div?",
+    tags: [
+      { _id: "3", name: "css" },
+      { _id: "4", name: "html" },
+    ],
+    author: {
+      _id: "a2",
+      name: "Naveen Chhipa",
+      picture: "https://example.com/john.jpg",
+    },
+    upvotes: 15,
+    views: 780,
+    answers: [],
+    createdAt: new Date("2025-04-01T12:00:00Z"),
+  },
+  {
+    _id: 6,
+    title: "How to center a div?",
+    tags: [
+      { _id: "3", name: "css" },
+      { _id: "4", name: "html" },
+    ],
+    author: {
+      _id: "a2",
+      name: "Naveen Chhipa",
+      picture: "https://example.com/john.jpg",
+    },
+    upvotes: 15,
+    views: 780,
+    answers: [],
+    createdAt: new Date("2025-04-01T12:00:00Z"),
+  },
 ];
-
 
 const Home = () => {
   return (

@@ -25,7 +25,7 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: "peercode",
   description:
-    "A community-driven platform for asking and answerin programming questions.",
+    "A community-driven platform for asking and answering programming questions.",
   // icons:{
 
   // }
@@ -48,14 +48,8 @@ export default function RootLayout({
               footerActionLink: "primary-text-gradient hover-text-primary-500",
             },
           }}
-          afterSignOutUrl='/'
+          afterSignOutUrl='/sign-in'
         >
-          <header className="flex items-center justify-end h-16 p-4 gap-4">
-            <SignedOut>
-              <SignInButton />
-              <SignUpButton />
-            </SignedOut>
-          </header>
           <ThemeProvider>{children}</ThemeProvider>
         </ClerkProvider>
       </body>
