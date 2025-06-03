@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import LeftSideBar from "@/components/shared/LeftSideBar";
 import RightSideBar from "@/components/shared/RightSideBar";
 
-const SIDEBAR_WIDTH = 300; // px, adjust as needed
+const SIDEBAR_WIDTH = 320; // px, adjust as needed
 const NAVBAR_HEIGHT = 64; // px, adjust if your Navbar is a different height
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -26,7 +26,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <Navbar />
       {/* Fixed Left Sidebar */}
       <aside
-        className="fixed left-0 z-20 hidden md:block pt-8"
+        className="fixed left-0 z-20 hidden pt-8 md:block"
         style={{
           width: SIDEBAR_WIDTH,
           top: NAVBAR_HEIGHT,
@@ -37,7 +37,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       </aside>
       {/* Fixed Right Sidebar */}
       <aside
-        className="fixed right-0 z-20 hidden lg:block pt-8"
+        className="fixed right-0 z-20 hidden  pt-8 lg:block"
         style={{
           width: SIDEBAR_WIDTH,
           top: NAVBAR_HEIGHT,

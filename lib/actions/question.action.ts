@@ -1,41 +1,63 @@
-"use server"
+"use server";
 
 import Question from "@/database/question.model";
-import { connectToDatabase } from "../mongoose"
+import { connectToDatabase } from "../mongoose";
 import Tag from "@/database/tag.model";
+import { CreateQuestionParams, GetQuestionByIdParams } from "./shared.types";
+import User from "@/database/user.model";
+import { revalidatePath } from "next/cache";
 
-export async function createQuestion(params: any) {
-    try {
-        connectToDatabase();
 
-        const {title, content, tags, author, path} = params;
+// instead of creating params one by one , we declared all the params at shared.types.d.ts file 
+export async function getQuestions() {
+  try {
+    connectToDatabase();
 
-        const question = await Question.create({
-            title,
-            content,
-            author
-        });
+    const questions = await Question.find({})
+      .populate({ path: "tags", model: Tag })
+      .populate({ path: "author", model: User })
+      .sort({ createdAt: -1 });
+      // using sort to sort the questions in newest to oldest
 
-        const tagDocuments = [];
+    return { questions };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export async function createQuestion(params: CreateQuestionParams) {
+  try {
+    connectToDatabase();
 
-        for(const tag of tags) {
-            const existingTag = await Tag.findOneAndUpdate(
-                {name: {$regex: new RegExp(`^${tag}$`, 'i')}},
-                {$setOnInsert: {name: tag, $push: {question: question._id}}},
-                {upsert: true, new: true}
-            )
+    const { title, content, tags, author, path } = params;
 
-            tagDocuments.push(existingTag._id);
-        }
+    const question = await Question.create({
+      title,
+      content,
+      author,
+    });
 
-        await Question.findByIdAndUpdate(question._id, {
-            $push: {tags: {$each: tagDocuments}},
-        })
+    const tagDocuments = [];
 
-        // Create an interaction record for the user's ask_question action
+    for (const tag of tags) {
+      const existingTag = await Tag.findOneAndUpdate(
+        { name: { $regex: new RegExp(`^${tag}$`, "i") } },
+        { $setOnInsert: { name: tag, $push: { question: question._id } } },
+        { upsert: true, new: true }
+      );
 
-        // Increment author's reputation by +5 for creating a question
-    } catch (error) {
-        
+      tagDocuments.push(existingTag._id);
     }
+
+    await Question.findByIdAndUpdate(question._id, {
+      $push: { tags: { $each: tagDocuments } },
+    });
+
+    // Create an interaction record for the user's ask_question action
+
+    // Increment author's reputation by +5 for creating a question
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+  }
 }

@@ -10,30 +10,33 @@ import { formatNumber, getTimeStamp } from "@/lib/utils";
 interface QuestionProps {
   _id: number;
   title: string;
-  tags: { _id: string; name: string }[];
-  author: { _id: string; name: string; picture: string };
-  upvotes: number;
-  views: number;
-  answers: unknown[];
-  createdAt: Date;
+  tags?: { _id: string; name: string }[];
+  author?: { _id: string; name: string; picture: string };
+  upvotes?: number;
+  views?: number;
+  answers?: unknown[];
+  createdAt?: Date;
 }
 
 const QuestionCard = ({
   _id,
   title,
-  tags,
+  tags = [],
   author,
-  upvotes,
-  views,
-  answers,
+  upvotes = 0,
+  views = 0,
+  answers = [],
   createdAt,
 }: QuestionProps) => {
+  // Early return if essential data is missing
+ if (!_id || !title) return null;
+
   return (
     <div className="card-wrapper rounded-[10px] p-9 sm:px-11">
       <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
         <div>
           <span className="subtle-regular text-dark400_light700 line-clamp-1 flex sm:hidden">
-            {getTimeStamp(createdAt)}
+            {createdAt && getTimeStamp(createdAt)}
           </span>
           <Link href={`/question/${_id}`}>
             <h3 className="sm:h3-semibold base-semibold text-dark200_light900 line-clamp-1 flex-1">
@@ -43,17 +46,23 @@ const QuestionCard = ({
         </div>
         {/* If signed in add edit or delete options */}
       </div>
+      
       <div className="mt-3.5 flex flex-wrap gap-2">
         {/* map on render tag component with key id and name */}
+        {tags && tags.length > 0 && tags.map((tag) => (
+          <span key={tag._id} className="tag-style">
+            {tag.name}
+          </span>
+        ))}
       </div>
 
       <div className="flex-between mt-6 w-full flex-wrap gap-3">
         <Metric
           imgUrl={AvatarIcon}
           alt="user"
-          value={author.name}
-          title={` - asked ${getTimeStamp(createdAt)}`}
-          href={`/profile/${author._id}`}
+          value={author?.name || "Anonymous"}
+          title={` - asked ${createdAt ? getTimeStamp(createdAt) : "Unknown time"}`}
+          href={`/profile/${author?._id || ""}`}
           isAuthor
           textStyles="small-medium text-dark400_light800"
         />
@@ -69,7 +78,7 @@ const QuestionCard = ({
         <Metric
           imgUrl={MessageIcon}
           alt="message"
-          value={answers.length}
+          value={Array.isArray(answers) ? answers.length : 0}
           title="Answers"
           textStyles="small-medium text-dark400_light800"
         />
