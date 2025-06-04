@@ -22,6 +22,7 @@ import CloseIcon from "../../assets/icons/close.svg";
 import { Badge } from "../ui/badge";
 import { createQuestion } from "@/lib/actions/question.action";
 import {useRouter, usePathname} from "next/navigation";
+import { useTheme } from "@/context/ThemeProvider";
 
 interface QuestionProps {
   mongoUserId: string;
@@ -30,6 +31,7 @@ interface QuestionProps {
 const type: any = "create";
 
 const Question = ({mongoUserId} : QuestionProps) => {
+  const {mode}=useTheme();
   const editorRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -114,7 +116,7 @@ const Question = ({mongoUserId} : QuestionProps) => {
           control={form.control}
           name="title"
           render={({ field }) => (
-            <FormItem className="flex w-full flex-col ">
+            <FormItem className="flex w-full flex-col">
               <FormLabel className="paragraph-semibold text-dark400_light900 peer-disabled:opacity-70 peer-disabled:dark:text-light-700">
                 Question Title<span className="text-primary-500">*</span>
               </FormLabel>
@@ -177,6 +179,8 @@ const Question = ({mongoUserId} : QuestionProps) => {
                       "codesample | bold italic forecolor | alignleft aligncenter |" +
                       "alignright alignjustify | bullist numlist",
                     content_style: "body { font-family:Inter; font-size:16px }",
+                            skin: mode==='dark'? 'oxide-dark':'oxide',
+                            content_css: mode==='dark'?'dark':'light',
                   }}
                 />
               </FormControl>

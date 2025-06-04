@@ -51,7 +51,7 @@ const QuestionCard = ({
         {/* map on render tag component with key id and name */}
         {tags && tags.length > 0 && tags.map((tag) => (
           <span key={tag._id} className="tag-style">
-            {tag.name}
+            {tag.name} 
           </span>
         ))}
       </div>
