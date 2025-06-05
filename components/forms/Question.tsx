@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 import React, { useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
@@ -27,7 +28,7 @@ interface QuestionProps {
   mongoUserId: string;
 }
 
-const type: any = "create";
+const type: string = "create";
 
 const Question = ({mongoUserId} : QuestionProps) => {
   const editorRef = useRef(null);
@@ -71,7 +72,7 @@ const Question = ({mongoUserId} : QuestionProps) => {
 
   const handleInputKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
-    field: any
+    field: import("react-hook-form").ControllerRenderProps<z.infer<typeof QuestionsSchema>, "tags">
   ) => {
     if (e.key === "Enter" && field.name === "tags") {
       e.preventDefault();
@@ -98,7 +99,10 @@ const Question = ({mongoUserId} : QuestionProps) => {
     }
   };
 
-  const handleTagRemove = (tag: string, field: any) => {
+  const handleTagRemove = (
+    tag: string,
+    field: import("react-hook-form").ControllerRenderProps<z.infer<typeof QuestionsSchema>, "tags">
+  ) => {
     const newTags = field.value.filter((t: string) => t !== tag);
 
     form.setValue("tags", newTags);
@@ -207,7 +211,7 @@ const Question = ({mongoUserId} : QuestionProps) => {
 
                   {field.value.length > 0 && (
                     <div className="flex-start mt-2.5 gap-2.5">
-                      {field.value.map((tag: any) => (
+                      {field.value.map((tag: string) => (
                         <Badge
                           key={tag}
                           className="subtle-medium background-light800_dark300 text-light400_light500 flex items-center justify-center gap-2 rounded-[5px] border-none px-4 py-2 capitalize"
