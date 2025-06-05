@@ -4,8 +4,6 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Button } from "../ui/button";
-import { SignedIn, SignedOut, SignOutButton } from "@clerk/nextjs";
 const LeftSideBar = () => {
   const pathName = usePathname();
   return (

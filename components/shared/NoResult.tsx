@@ -1,3 +1,4 @@
+/* eslint-disable tailwindcss/classnames-order */
 import Image from "next/image";
 import React from "react";
 import LightIllustration from "../../assets/images/light-illustration.png";

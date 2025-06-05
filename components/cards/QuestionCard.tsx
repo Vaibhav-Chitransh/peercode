@@ -1,3 +1,4 @@
+/* eslint-disable tailwindcss/classnames-order */
 import Link from "next/link";
 import React from "react";
 import Metric from "../shared/Metric";
@@ -50,7 +51,10 @@ const QuestionCard = ({
       <div className="mt-3.5 flex flex-wrap gap-2">
         {/* map on render tag component with key id and name */}
         {tags && tags.length > 0 && tags.map((tag) => (
-          <span key={tag._id} className="tag-style">
+          <span
+            key={tag._id}
+            className="rounded-full px-3 py-1 text-xs font-medium bg-blue-100 text-blue-500 dark:bg-blue-900 dark:text-blue-200"
+          >
             {tag.name}
           </span>
         ))}
