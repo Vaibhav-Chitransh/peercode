@@ -5,7 +5,6 @@ import Metric from "../shared/Metric";
 import LikeIcon from "@/assets/icons/like.svg";
 import MessageIcon from "../../assets/icons/message.svg";
 import EyeIcon from "../../assets/icons/eye.svg";
-import AvatarIcon from "../../assets/icons/avatar.svg";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 
 interface QuestionProps {
@@ -62,7 +61,7 @@ const QuestionCard = ({
 
       <div className="flex-between mt-6 w-full flex-wrap gap-3">
         <Metric
-          imgUrl={AvatarIcon}
+          imgUrl={author?.picture || ""}
           alt="user"
           value={author?.name || "Anonymous"}
           title={` - asked ${createdAt ? getTimeStamp(createdAt) : "Unknown time"}`}
