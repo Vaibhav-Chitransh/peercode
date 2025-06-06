@@ -79,14 +79,14 @@ const RightSideBar = () => {
         */}
         <div>
           <h3 className="h3-bold text-dark200_light900"> Top Questions</h3>
-          <div className="mt-7 flex w-full flex-col gap-[30px] overflow-x-hidden">
+          <div className="mt-5 flex w-10/12 flex-col gap-4 overflow-x-hidden">
             {hotQuestions.map((question) => (
               <Link
                 href={`/questions/${question.id}`}
                 key={question.id}
                 className="flex w-full min-w-0 cursor-pointer items-center justify-between gap-7 overflow-x-hidden"
               >
-                <p className="text-dark500_light700 w-full text-[13px] leading-snug">
+                <p className="text-dark500_light700 w-full text-[13px] leading-snug transition-colors duration-200 hover:text-gray-700 dark:hover:text-gray-300">
                   {question.title}
                 </p>
 
@@ -102,9 +102,9 @@ const RightSideBar = () => {
           </div>
         </div>
 
-        <div className="mt-10">
+        <div className="mt-7">
           <h3 className="h3-bold text-dark200_light900"> Popular Tags</h3>
-          <div className="mt-7 flex w-full flex-col gap-4 overflow-x-hidden">
+          <div className="mt-7 flex w-10/12 flex-col gap-4 overflow-x-hidden">
             {popularTags.map((tag) => (
               <RenderTag
                 key={tag.id}

@@ -51,7 +51,9 @@ const page = async ({
               {result.author.name}
             </p>
           </Link>
-          <div className="flex justify-end">{/* <Votes /> */}</div>
+          <div className="flex justify-end">
+            {/* <Votes /> */}
+          </div>
         </div>
         <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
           {result.title}
