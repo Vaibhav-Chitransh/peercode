@@ -18,11 +18,9 @@ import AllAnswer from "@/components/shared/AllAnswer";
 // import Votes from "@/components/shared/Votes";
 
 const page = async ({
-  params,
-  searchParams,
+  params
 }: {
-  params: { id: string };
-  searchParams?: Record<string, string | string[] | undefined>;
+  params: { id: string }
 }) => {
   const { userId: clerkId } = await auth();
   let mongoUser;
