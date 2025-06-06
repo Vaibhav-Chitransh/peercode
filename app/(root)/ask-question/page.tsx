@@ -1,7 +1,4 @@
-// At the top of your page.tsx
-import dynamic from "next/dynamic";
-const Question = dynamic(() => import("@/components/forms/Question"), { ssr: false });
-
+import AskQuestionClient from "./AskQuestionClient";
 import { getUserById } from "@/lib/actions/user.action";
 // import { redirect } from "next/navigation";
 import React from "react";
@@ -18,14 +15,7 @@ const AskQuestion = async () => {
   const mongoUser = await getUserById({ userId });
   console.log(mongoUser);
 
-  return (
-    <div>
-      <h1 className="h1-bold text-dark100_light900">Ask a Question</h1>
-      <div className="mt-9">
-        <Question mongoUserId={JSON.stringify(mongoUser._id)} />
-      </div>
-    </div>
-  );
+  return <AskQuestionClient mongoUserId={JSON.stringify(mongoUser._id)} />;
 };
 
 export default AskQuestion;
