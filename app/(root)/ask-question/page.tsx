@@ -1,4 +1,7 @@
-import Question from "@/components/forms/Question";
+// At the top of your page.tsx
+import dynamic from "next/dynamic";
+const Question = dynamic(() => import("@/components/forms/Question"), { ssr: false });
+
 import { getUserById } from "@/lib/actions/user.action";
 // import { redirect } from "next/navigation";
 import React from "react";
