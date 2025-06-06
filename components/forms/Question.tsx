@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 import React, { useRef, useState } from "react";
-import { Editor } from "@tinymce/tinymce-react";
+import dynamic from "next/dynamic";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -22,7 +22,7 @@ import Image from "next/image";
 import CloseIcon from "../../assets/icons/close.svg";
 import { Badge } from "../ui/badge";
 import { createQuestion } from "@/lib/actions/question.action";
-import {useRouter, usePathname} from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 interface QuestionProps {
   mongoUserId: string;
@@ -30,7 +30,13 @@ interface QuestionProps {
 
 const type: string = "create";
 
-const Question = ({mongoUserId} : QuestionProps) => {
+// Dynamically import Editor with SSR disabled
+const Editor = dynamic(
+  () => import("@tinymce/tinymce-react").then((mod) => mod.Editor),
+  { ssr: false }
+);
+
+const Question = ({ mongoUserId }: QuestionProps) => {
   const editorRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -58,11 +64,10 @@ const Question = ({mongoUserId} : QuestionProps) => {
         content: values.explanation,
         tags: values.tags,
         author: JSON.parse(mongoUserId),
-        path:pathname,
+        path: pathname,
       });
       // navigate to home page
       router.push("/");
-
     } catch (error) {
       console.log(error);
     } finally {
@@ -72,7 +77,10 @@ const Question = ({mongoUserId} : QuestionProps) => {
 
   const handleInputKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
-    field: import("react-hook-form").ControllerRenderProps<z.infer<typeof QuestionsSchema>, "tags">
+    field: import("react-hook-form").ControllerRenderProps<
+      z.infer<typeof QuestionsSchema>,
+      "tags"
+    >
   ) => {
     if (e.key === "Enter" && field.name === "tags") {
       e.preventDefault();
@@ -101,7 +109,10 @@ const Question = ({mongoUserId} : QuestionProps) => {
 
   const handleTagRemove = (
     tag: string,
-    field: import("react-hook-form").ControllerRenderProps<z.infer<typeof QuestionsSchema>, "tags">
+    field: import("react-hook-form").ControllerRenderProps<
+      z.infer<typeof QuestionsSchema>,
+      "tags"
+    >
   ) => {
     const newTags = field.value.filter((t: string) => t !== tag);
 
