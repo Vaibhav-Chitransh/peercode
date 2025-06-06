@@ -17,12 +17,13 @@ import { getUserById } from "@/lib/actions/user.action";
 import AllAnswer from "@/components/shared/AllAnswer";
 // import Votes from "@/components/shared/Votes";
 
-interface PageProps {
+const page = async ({
+  params,
+  searchParams,
+}: {
   params: { id: string };
   searchParams?: Record<string, string | string[] | undefined>;
-}
-
-const page = async ({ params, searchParams }: PageProps) => {
+}) => {
   const { userId: clerkId } = await auth();
   let mongoUser;
   if (clerkId) {
@@ -104,13 +105,12 @@ const page = async ({ params, searchParams }: PageProps) => {
         userId={JSON.stringify(mongoUser?._id)}
         totalAnswers={result.answer ? result.answer.length : 0}
       />
-      
+
       <Answer
         question={result.content}
         questionId={JSON.stringify(result._id)}
         authorId={JSON.stringify(mongoUser?._id)}
       />
-      
 
       {/* <AllAnswer
         questionId={result._id}
