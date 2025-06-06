@@ -1,16 +1,16 @@
 import Question from "@/components/forms/Question";
 import { getUserById } from "@/lib/actions/user.action";
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation";
 import React from "react";
 
 const AskQuestion = async () => {
   // const { userId } = await auth();
   const userId = "clerk_abc123";
 
-  if (!userId) {
-    console.log("User not authenticated");
-    redirect("/sign-in");
-  }
+  // if (!userId) {
+  //   console.log("User not authenticated");
+  //   redirect("/sign-in");
+  // }
 
   const mongoUser = await getUserById({ userId });
   console.log(mongoUser);
