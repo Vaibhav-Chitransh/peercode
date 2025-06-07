@@ -174,6 +174,7 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams){
       throw error;
       
      }
+    }
 
 export async function getUserInfo(params: GetUserByIdParams) {
   try {
