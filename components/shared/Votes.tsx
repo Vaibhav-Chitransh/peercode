@@ -15,6 +15,7 @@ import DownvotedIcon from "@/assets/icons/downvoted.svg";
 import StarFilledIcon from "@/assets/icons/star-filled.svg";
 import StarRedIcon from "@/assets/icons/star-red.svg";
 import { downvoteAnswer, upvoteAnswer } from "@/lib/actions/answer.action";
+import { toggleSaveQuestion } from "@/lib/actions/user.action";
 // import { useRouter } from "next/router";
 
 
@@ -42,8 +43,12 @@ const Votes = ({
   const pathname = usePathname();
 //   const router=useRouter();
 
-  const handleSave=()=>{
-     
+  const handleSave=async ()=>{
+     await toggleSaveQuestion({
+      userId:JSON.parse(userId),
+      questionId: JSON.parse(itemId),
+      path: pathname,
+     })
   }
 
   const handleVote = async (action: string) => {
