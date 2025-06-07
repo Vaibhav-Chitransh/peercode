@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable tailwindcss/classnames-order */
 import Link from "next/link";
 import React from "react";
@@ -8,22 +9,24 @@ import EyeIcon from "../../assets/icons/eye.svg";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 
 interface QuestionProps {
+  clerkId?: string;
   _id: number;
   title: string;
   tags?: { _id: string; name: string }[];
   author?: { _id: string; name: string; picture: string };
-  upvotes?: number;
+  upvotes?: string[];
   views?: number;
   answers?: unknown[];
   createdAt?: Date;
 }
 
 const QuestionCard = ({
+  clerkId,
   _id,
   title,
   tags = [],
   author,
-  upvotes=0,
+  upvotes=[],
   views = 0,
   answers = [],
   createdAt,
@@ -73,7 +76,7 @@ const QuestionCard = ({
         <Metric
           imgUrl={LikeIcon}
           alt="Upvotes"
-          value={formatNumber(upvotes)}
+          value={formatNumber(upvotes.length)}
           title="Votes"
           textStyles="small-medium text-dark400_light800"
         />
