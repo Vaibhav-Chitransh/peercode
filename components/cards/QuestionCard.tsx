@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable tailwindcss/classnames-order */
 import Link from "next/link";
 import React from "react";
@@ -8,6 +9,7 @@ import EyeIcon from "../../assets/icons/eye.svg";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 
 interface QuestionProps {
+  clerkId?: string;
   _id: number;
   title: string;
   tags?: { _id: string; name: string }[];
@@ -19,6 +21,7 @@ interface QuestionProps {
 }
 
 const QuestionCard = ({
+  clerkId,
   _id,
   title,
   tags = [],
