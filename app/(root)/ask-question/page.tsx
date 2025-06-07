@@ -20,7 +20,7 @@ const AskQuestion = async () => {
     redirect("/sign-up"); // or show an error page if you prefer
   }
 
-  return <AskQuestionClient mongoUserId={JSON.stringify(mongoUser._id)} />;
+  return <AskQuestionClient mongoUserId={JSON.stringify(mongoUser?._id)} />;
 };
 
 export default AskQuestion;
