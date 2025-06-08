@@ -16,7 +16,10 @@ import StarFilledIcon from "@/assets/icons/star-filled.svg";
 import StarRedIcon from "@/assets/icons/star-red.svg";
 import { downvoteAnswer, upvoteAnswer } from "@/lib/actions/answer.action";
 import { toggleSaveQuestion } from "@/lib/actions/user.action";
-// import { useRouter } from "next/router";
+import { useEffect } from "react";
+
+import { useRouter } from "next/navigation";
+import { viewQuestion } from "@/lib/actions/interaction.action";
 
 
 interface Props {
@@ -41,7 +44,7 @@ const Votes = ({
   hasSaved,
 }: Props) => {
   const pathname = usePathname();
-//   const router=useRouter();
+  const router=useRouter();
 
   const handleSave=async ()=>{
      await toggleSaveQuestion({
@@ -102,7 +105,13 @@ const Votes = ({
         return;
       }
     }
- 
+
+    useEffect(()=>{
+        viewQuestion({
+          questionId: JSON.parse(itemId),
+          userId: userId ? JSON.parse(userId) : undefined,
+        })
+    },[itemId,userId,pathname,router])
   
 
 
