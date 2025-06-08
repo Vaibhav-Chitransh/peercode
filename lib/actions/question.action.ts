@@ -3,12 +3,15 @@
 import Question from "@/database/question.model";
 import { connectToDatabase } from "../mongoose";
 import Tag from "@/database/tag.model";
-import { CreateQuestionParams, GetQuestionByIdParams, QuestionVoteParams } from "./shared.types";
+import {
+  CreateQuestionParams,
+  GetQuestionByIdParams,
+  QuestionVoteParams,
+} from "./shared.types";
 import User from "@/database/user.model";
 import { revalidatePath } from "next/cache";
 
-
-// instead of creating params one by one , we declared all the params at shared.types.d.ts file 
+// instead of creating params one by one , we declared all the params at shared.types.d.ts file
 export async function getQuestions() {
   try {
     connectToDatabase();
@@ -17,7 +20,7 @@ export async function getQuestions() {
       .populate({ path: "tags", model: Tag })
       .populate({ path: "author", model: User })
       .sort({ createdAt: -1 });
-      // using sort to sort the questions in newest to oldest
+    // using sort to sort the questions in newest to oldest
 
     return { questions };
   } catch (error) {
@@ -43,7 +46,7 @@ export async function createQuestion(params: CreateQuestionParams) {
     for (const tag of tags) {
       const existingTag = await Tag.findOneAndUpdate(
         { name: { $regex: new RegExp(`^${tag}$`, "i") } },
-        { $setOnInsert: { name: tag, $push: { question: question._id } } },
+        { $setOnInsert: { name: tag }, $push: { questions: question._id } },
         { upsert: true, new: true }
       );
 
@@ -63,18 +66,22 @@ export async function createQuestion(params: CreateQuestionParams) {
   }
 }
 
-export async function getQuestionById(params:GetQuestionByIdParams){
-  try{
+export async function getQuestionById(params: GetQuestionByIdParams) {
+  try {
     connectToDatabase();
 
-    const {questionId}=params;
-    
-    const question= await Question.findById(questionId)
-      .populate({path: 'tags', model: Tag, select: '_id name'})
-      .populate({path: 'author',model: User, select: '_id clerkId name picture'})
+    const { questionId } = params;
 
-      return question;
-  } catch(error){
+    const question = await Question.findById(questionId)
+      .populate({ path: "tags", model: Tag, select: "_id name" })
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id clerkId name picture",
+      });
+
+    return question;
+  } catch (error) {
     console.log(error);
     throw error;
   }
@@ -83,8 +90,7 @@ export async function getQuestionById(params:GetQuestionByIdParams){
 export async function upvoteQuestion(params: QuestionVoteParams) {
   try {
     connectToDatabase();
-    const { questionId, userId, hasupVoted, hasdownVoted, path } =
-      params;
+    const { questionId, userId, hasupVoted, hasdownVoted, path } = params;
     let updateQuery = {};
     if (hasupVoted) {
       updateQuery = { $pull: { upvotes: userId } };
@@ -102,8 +108,8 @@ export async function upvoteQuestion(params: QuestionVoteParams) {
     if (!question) {
       throw new Error("Question not found");
     }
-    // Increment user's reputation 
-    
+    // Increment user's reputation
+
     revalidatePath(path);
   } catch (error) {
     console.error(error);
@@ -111,12 +117,10 @@ export async function upvoteQuestion(params: QuestionVoteParams) {
   }
 }
 
-
 export async function downvoteQuestion(params: QuestionVoteParams) {
   try {
     connectToDatabase();
-    const { questionId, userId, hasupVoted, hasdownVoted, path } =
-      params;
+    const { questionId, userId, hasupVoted, hasdownVoted, path } = params;
     let updateQuery = {};
     if (hasdownVoted) {
       updateQuery = { $pull: { downvotes: userId } };
@@ -135,7 +139,7 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
       throw new Error("Question not found");
     }
     // Increment user's reputation
-   
+
     revalidatePath(path);
   } catch (error) {
     console.error(error);
