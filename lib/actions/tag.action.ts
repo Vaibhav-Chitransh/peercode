@@ -40,17 +40,37 @@ export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
 export async function getAllTags(params: GetAllTagsParams) {
   try {
     connectToDatabase();
-    const {searchQuery} = params;
+    const { searchQuery ,filter} = params;
 
     const query: FilterQuery<typeof Tag> = {};
     if (searchQuery) {
       query.$or = [
         { name: { $regex: new RegExp(searchQuery, "i") } },
         { content: { $regex: new RegExp(searchQuery, "i") } },
-      ]
+      ];
+    }
+    let sortOptions={};
+
+     switch (filter){
+
+      case "popular":
+        sortOptions = {questions: -1}
+        break;
+      case "recent":
+        sortOptions={createdAt: -1}
+        break;
+      case "name":
+         sortOptions={name: 1}
+        break;
+      case "old":
+        sortOptions={createdAt: 1}
+        break;
+
+      default:
+        break;
     }
 
-    const tags = await Tag.find(query);
+    const tags = await Tag.find(query).sort(sortOptions);
     return { tags };
   } catch (error) {
     console.log(error);
@@ -63,13 +83,13 @@ export async function getQuestionByTagId(params: GetQuestionsByTagIdParams) {
     connectToDatabase();
     const { tagId, page = 1, pageSize = 10, searchQuery } = params;
 
-    const tagFilter: FilterQuery<ITag> = { _id: tagId};
+    const tagFilter: FilterQuery<ITag> = { _id: tagId };
 
-    const tag = await Tag.findOne({ tagFilter }).populate({
+    const tag = await Tag.findOne(tagFilter).populate({
       path: "questions",
       model: Question,
       match: searchQuery
-        ? { title: { $regex: searchQuery, $options: 'i'}}
+        ? { title: { $regex: searchQuery, $options: "i" } }
         : {},
       options: {
         sort: { createdAt: -1 },
@@ -85,23 +105,22 @@ export async function getQuestionByTagId(params: GetQuestionsByTagIdParams) {
     }
 
     const questions = tag.questions;
-    return { tagTitle: tag.name , questions};
+    return { tagTitle: tag.name, questions };
   } catch (error) {
     console.log(error);
     throw error;
   }
 }
 
-export async function getTopPopularTags(){
+export async function getTopPopularTags() {
   try {
     connectToDatabase();
-    const populatTags =await Tag.aggregate([
-      { $project: {name: 1,numberofQuestions: { $size: "$questions"}}},
-      { $sort: {numberofQuestions: -1}},
-      { $limit: 5}
-    ])
+    const populatTags = await Tag.aggregate([
+      { $project: { name: 1, numberofQuestions: { $size: "$questions" } } },
+      { $sort: { numberofQuestions: -1 } },
+      { $limit: 5 },
+    ]);
     return populatTags;
-    
   } catch (error) {
     throw error;
   }

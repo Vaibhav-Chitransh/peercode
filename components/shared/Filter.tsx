@@ -1,4 +1,7 @@
 "use client";
+import { formURLQuery } from "@/lib/utils";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 interface filterProps {
@@ -10,14 +13,27 @@ interface filterProps {
   containerClasses?: string;
 }
 
-const Filter = ({ filters, otherClasses, containerClasses }: filterProps) => {
-  const selectId = "filter-select";
+const Filter =  ({ filters, otherClasses, containerClasses  }: filterProps) => {
+ const searchParams=useSearchParams();
+ const router = useRouter();
+
+ const paramFilter =  searchParams.get("filter");
+
+  const handleUpdateParams =(value: string)=>{
+    const newUrl=formURLQuery({
+      params: searchParams.toString(),
+      key: 'filter',
+      value,
+    })
+    router.push(newUrl, { scroll: false })
+  };
 
   return (
     <div className={`group relative ${containerClasses}`}>
       <div className="relative">
         <select
-          id={selectId}
+          onChange={(e)=>handleUpdateParams(e.target.value)}
+          defaultValue={paramFilter || undefined}
           className={`
             w-full cursor-pointer appearance-none rounded-xl
             border border-gray-300/60 bg-gray-100/80
@@ -34,7 +50,6 @@ const Filter = ({ filters, otherClasses, containerClasses }: filterProps) => {
             dark:hover:bg-gray-800/70 dark:focus:border-blue-500/60
             ${otherClasses}
           `}
-          defaultValue=""
         >
           <option
             value=""

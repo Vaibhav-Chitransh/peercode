@@ -1,19 +1,19 @@
-import QuestionCard from '@/components/cards/QuestionCard'
-import LocalSearchbar from '@/components/shared/search/LocalSearchbar'
+import QuestionCard from "@/components/cards/QuestionCard";
+import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 // import { IQuestion } from '@/database/question.model'
-import { getQuestionByTagId } from '@/lib/actions/tag.action'
-import { URLProps } from '@/types'
-import React from 'react'
+import { getQuestionByTagId } from "@/lib/actions/tag.action";
+import { URLProps } from "@/types";
+import React from "react";
 import NoResult from "@/components/shared/NoResult";
 import SearchIcon from "@/assets/icons/search.svg";
-const page = async ({params,searchParams}:URLProps) => {
-  const result=await getQuestionByTagId({
+const page = async ({ params, searchParams }: URLProps) => {
+  const result = await getQuestionByTagId({
     tagId: params.id,
     page: 1,
-    searchQuery: searchParams.q
-  })
+    searchQuery: searchParams.q,
+  });
   return (
-     <>
+    <>
       <h1 className="h1-bold text-dark100_light900">{result.tagTitle}</h1>
 
       <div className="mt-11 w-full">
@@ -24,11 +24,7 @@ const page = async ({params,searchParams}:URLProps) => {
           placeholder="Search tag questions"
           otherClasses="flex-1"
         />
-
-     
       </div>
-
-  
 
       <div className="mt-10 flex w-full flex-col gap-6">
         {result.questions.length > 0 ? (
@@ -57,7 +53,7 @@ const page = async ({params,searchParams}:URLProps) => {
         )}
       </div>
     </>
-  )
-}
+  );
+};
 
-export default page 
+export default page;
