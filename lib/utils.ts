@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-
+import qs from "query-string";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -43,4 +43,42 @@ export function formatNumber(number: number) {
 export function getJoinedDate(date: Date): string {
   const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long' };
   return date.toLocaleDateString('en-US', options);
+}
+
+
+interface URLQueryParams{
+  params: string;
+  key: string;
+  value: string | null; 
+}
+
+export const formURLQuery=({params,key,value}:URLQueryParams)=>{
+
+  const currentURL = qs.parse(params);
+  currentURL[key]=value;
+  
+  return qs.stringifyUrl({
+    url: window.location.pathname,
+    query: currentURL,
+  },
+  {skipNull: true})
+}
+
+interface RemoveKeysFromQueryParams{
+  params: string;
+  keysToRemove: string[];
+}
+
+export const RemoveKeysFromQuery=({params,keysToRemove}:RemoveKeysFromQueryParams)=>{
+  const currentURL=qs.parse(params);
+  keysToRemove.forEach((key)=>{
+    delete currentURL[key];
+  })
+
+  return qs.stringifyUrl({
+    url: window.location.pathname,
+    query: currentURL,
+  },
+  {skipNull: true})
+  
 }
