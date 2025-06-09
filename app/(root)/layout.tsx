@@ -1,30 +1,16 @@
-"use client";
 import Navbar from "@/components/shared/Navbar";
-import React, { useEffect, useState } from "react";
 import LeftSideBar from "@/components/shared/LeftSideBar";
 import RightSideBar from "@/components/shared/RightSideBar";
+import React from "react";
 
-const SIDEBAR_WIDTH = 320; // px, adjust as needed
-const NAVBAR_HEIGHT = 64; // px, adjust if your Navbar is a different height
+const SIDEBAR_WIDTH = 320;
+const NAVBAR_HEIGHT = 64;
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
-  const [leftMargin, setLeftMargin] = useState(0);
-  const [rightMargin, setRightMargin] = useState(0);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setLeftMargin(window.innerWidth >= 768 ? SIDEBAR_WIDTH : 0);
-      setRightMargin(window.innerWidth >= 1024 ? SIDEBAR_WIDTH : 0);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   return (
     <main className="background-light850_dark100 relative min-h-screen w-full max-w-full overflow-x-hidden">
       <Navbar />
-      {/* Fixed Left Sidebar */}
+      {/* Left Sidebar */}
       <aside
         className="fixed left-0 z-20 hidden pt-8 md:block"
         style={{
@@ -35,9 +21,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       >
         <LeftSideBar />
       </aside>
-      {/* Fixed Right Sidebar */}
+
+      {/* Right Sidebar */}
       <aside
-        className="fixed right-0 z-20 hidden  pt-8 lg:block"
+        className="fixed right-0 z-20 hidden pt-8 lg:block"
         style={{
           width: SIDEBAR_WIDTH,
           top: NAVBAR_HEIGHT,
@@ -46,22 +33,22 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       >
         <RightSideBar />
       </aside>
+
       {/* Center Content */}
       <section
         className="relative flex flex-col overflow-y-auto"
         style={{
           minHeight: `calc(100vh - ${NAVBAR_HEIGHT}px)`,
-          marginLeft: leftMargin,
-          marginRight: rightMargin,
-          paddingTop: 136, // pt-8
-          paddingBottom: 24, // pb-6
-          paddingLeft: 24, // px-6
-          paddingRight: 24, // px-6
+          marginLeft: SIDEBAR_WIDTH,
+          marginRight: SIDEBAR_WIDTH,
+          paddingTop: 136,
+          paddingBottom: 24,
+          paddingLeft: 24,
+          paddingRight: 24,
         }}
       >
         <div className="w-full">{children}</div>
       </section>
-      {/* Toaster */}
     </main>
   );
 };
