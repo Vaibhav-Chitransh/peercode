@@ -15,7 +15,7 @@ import Stats from "@/components/shared/Stats";
 import QuestionTab from "@/components/shared/QuestionTab";
 import AnswerTab from "@/components/shared/AnswerTab";
 
-const Profile = async ({ params, searchParams }: URLProps) => {
+const page = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkId } = await auth();
   const userInfo = await getUserInfo({ userId: params.id });
 
@@ -112,4 +112,4 @@ const Profile = async ({ params, searchParams }: URLProps) => {
   );
 };
 
-export default Profile;
+export default page;
