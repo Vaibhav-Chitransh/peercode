@@ -45,8 +45,8 @@ const RightSideBar = async () => {
           <div className="mt-7 flex w-10/12 flex-col gap-4 overflow-x-hidden">
             {popularTags.map((tag) => (
               <RenderTag
-                key={tag.id}
-                id={tag.id}
+                key={tag._id}
+                id={tag._id}
                 name={tag.name}
                 totalQuestions={tag.numberofQuestions}
                 showCount
