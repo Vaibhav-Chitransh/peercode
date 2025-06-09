@@ -7,6 +7,8 @@ import LikeIcon from "@/assets/icons/like.svg";
 import MessageIcon from "../../assets/icons/message.svg";
 import EyeIcon from "../../assets/icons/eye.svg";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
+import { SignedIn } from "@clerk/nextjs";
+import EditDeleteAction from "../shared/EditDeleteAction";
 
 interface QuestionProps {
   clerkId?: string;
@@ -33,6 +35,7 @@ const QuestionCard = ({
 }: QuestionProps) => {
   // Early return if essential data is missing
  if (!_id || !title) return null;
+ const showActionButtons = clerkId && author && (clerkId === (author as { clerkId?: string }).clerkId);
 
   return (
     <div className="card-wrapper rounded-[10px] p-9 sm:px-11">
@@ -47,7 +50,13 @@ const QuestionCard = ({
             </h3>
           </Link>
         </div>
-        {/* If signed in add edit or delete options */}
+        
+        <SignedIn>
+          {showActionButtons && (
+            <EditDeleteAction type="Question" itemId={JSON.stringify(_id)} />
+          )}
+        </SignedIn>
+
       </div>
       
       <div className="mt-3.5 flex flex-wrap gap-2">
