@@ -27,12 +27,21 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
 
   let result;
 
-  if (searchParams?.filter === "recommended") {
+  const filter = Array.isArray(searchParams.filter)
+    ? searchParams.filter[0]
+    : searchParams.filter;
+  const q = Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q;
+  const pageRaw = Array.isArray(searchParams.page)
+    ? searchParams.page[0]
+    : searchParams.page;
+  const page = pageRaw ? +pageRaw : 1;
+
+  if (filter === "recommended") {
     if (userId) {
       result = await getRecommendedQuestions({
         userId,
-        searchQuery: searchParams.q,
-        page: searchParams.page ? +searchParams.page : 1,
+        searchQuery: q,
+        page,
       });
     } else {
       result = {
@@ -42,9 +51,9 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
     }
   } else {
     result = await getQuestions({
-      searchQuery: searchParams.q,
-      filter: searchParams.filter,
-      page: searchParams.page ? +searchParams.page : 1,
+      searchQuery: q,
+      filter,
+      page,
     });
   }
 
