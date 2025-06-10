@@ -6,11 +6,12 @@ import { URLProps } from "@/types";
 import React from "react";
 import NoResult from "@/components/shared/NoResult";
 import SearchIcon from "@/assets/icons/search.svg";
+import Pagination from "@/components/shared/Pagination";
 const page = async ({ params, searchParams }: URLProps) => {
   const result = await getQuestionByTagId({
     tagId: params.id,
-    page: 1,
     searchQuery: searchParams.q,
+    page: searchParams.page ? +searchParams.page : 1,
   });
   return (
     <>
@@ -30,8 +31,8 @@ const page = async ({ params, searchParams }: URLProps) => {
         {result.questions.length > 0 ? (
           result.questions.map((question) => (
             <QuestionCard
-              key={question._id}
-              _id={question._id}
+              key={String(question._id)}
+              _id={String(question._id)}
               title={question.title}
               author={question.author}
               tags={question.tags}
@@ -51,6 +52,12 @@ const page = async ({ params, searchParams }: URLProps) => {
             linkTitle="Ask a Question"
           />
         )}
+      </div>
+      <div className="mt-10">
+        <Pagination
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          isNext={result.isNext}
+        />
       </div>
     </>
   );

@@ -9,116 +9,13 @@ import NoResult from "@/components/shared/NoResult";
 import QuestionCard from "@/components/cards/QuestionCard";
 import { getQuestions } from "@/lib/actions/question.action";
 import { SearchParamsProps } from "@/types";
+import Pagination from "@/components/shared/Pagination";
 
-// const questions = [
-//   {
-//     _id: 1,
-//     title: "Cascading Deletes in SQLAlchemy?",
-//     tags: [
-//       { _id: "1", name: "python" },
-//       { _id: "2", name: "sql" },
-//     ],
-//     author: {
-//       _id: "a1",
-//       name: "Vaibhav Chitransh",
-//       picture: "https://example.com/vaibhav.jpg",
-//     },
-//     upvotes: 43791,
-//     views: 10000,
-//     answers: [],
-//     createdAt: new Date("2024-10-01T12:00:00Z"),
-//   },
-//   {
-//     _id: 2,
-//     title: "How to center a div?",
-//     tags: [
-//       { _id: "3", name: "css" },
-//       { _id: "4", name: "html" },
-//     ],
-//     author: {
-//       _id: "a2",
-//       name: "Naveen Chhipa",
-//       picture: "https://example.com/john.jpg",
-//     },
-//     upvotes: 15,
-//     views: 780,
-//     answers: [],
-//     createdAt: new Date("2025-04-01T12:00:00Z"),
-//   },
-//   {
-//     _id: 3,
-//     title: "How to center a div?",
-//     tags: [
-//       { _id: "3", name: "css" },
-//       { _id: "4", name: "html" },
-//     ],
-//     author: {
-//       _id: "a2",
-//       name: "Naveen Chhipa",
-//       picture: "https://example.com/john.jpg",
-//     },
-//     upvotes: 15,
-//     views: 780,
-//     answers: [],
-//     createdAt: new Date("2025-04-01T12:00:00Z"),
-//   },
-//   {
-//     _id: 4,
-//     title: "How to center a div?",
-//     tags: [
-//       { _id: "3", name: "css" },
-//       { _id: "4", name: "html" },
-//     ],
-//     author: {
-//       _id: "a2",
-//       name: "Naveen Chhipa",
-//       picture: "https://example.com/john.jpg",
-//     },
-//     upvotes: 15,
-//     views: 780,
-//     answers: [],
-//     createdAt: new Date("2025-04-01T12:00:00Z"),
-//   },
-//   {
-//     _id: 5,
-//     title: "How to center a div?",
-//     tags: [
-//       { _id: "3", name: "css" },
-//       { _id: "4", name: "html" },
-//     ],
-//     author: {
-//       _id: "a2",
-//       name: "Naveen Chhipa",
-//       picture: "https://example.com/john.jpg",
-//     },
-//     upvotes: 15,
-//     views: 780,
-//     answers: [],
-//     createdAt: new Date("2025-04-01T12:00:00Z"),
-//   },
-//   {
-//     _id: 6,
-//     title: "How to center a div?",
-//     tags: [
-//       { _id: "3", name: "css" },
-//       { _id: "4", name: "html" },
-//     ],
-//     author: {
-//       _id: "a2",
-//       name: "Naveen Chhipa",
-//       picture: "https://example.com/john.jpg",
-//     },
-//     upvotes: 15,
-//     views: 780,
-//     answers: [],
-//     createdAt: new Date("2025-04-01T12:00:00Z"),
-//   },
-// ];
-
-const Home = async ({searchParams}: SearchParamsProps) => {
+const Home = async ({ searchParams }: SearchParamsProps) => {
   const result = await getQuestions({
     searchQuery: searchParams.q,
-    filter: searchParams.filter
+    filter: searchParams.filter,
+    page: searchParams.page ? +searchParams.page : 1,
   });
   console.log(result.questions);
 
@@ -176,6 +73,12 @@ const Home = async ({searchParams}: SearchParamsProps) => {
             linkTitle="Ask a Question"
           />
         )}
+      </div>
+      <div className="mt-10">
+        <Pagination
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          isNext={result.isNext}
+        />
       </div>
     </>
   );

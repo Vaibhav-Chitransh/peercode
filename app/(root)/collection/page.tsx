@@ -10,18 +10,19 @@ import QuestionCard from "@/components/cards/QuestionCard";
 import { getSavedQuestions } from "@/lib/actions/user.action";
 import { auth } from "@clerk/nextjs/server";
 import { SearchParamsProps } from "@/types";
+import Pagination from "@/components/shared/Pagination";
 
+const Home = async ({ searchParams }: SearchParamsProps) => {
+  const { userId } = await auth();
+  if (!userId) return null;
 
-const Home = async ({searchParams}: SearchParamsProps) => {
-  const {userId}= await auth();
-  if(!userId) return null;
-
-  const result = await getSavedQuestions({
+  const {result ,isNext} = await getSavedQuestions({
     clerkId: userId,
     searchQuery: searchParams.q,
     filter: searchParams.filter,
+    page: searchParams.page ? +searchParams.page : 1,
   });
-  console.log(result.questions);
+  console.log(result);
 
   return (
     <>
@@ -42,11 +43,9 @@ const Home = async ({searchParams}: SearchParamsProps) => {
         />
       </div>
 
-  
-
       <div className="mt-10 flex w-full flex-col gap-6">
-        {result.questions.length > 0 ? (
-          result.questions.map((question) => (
+        {result.length > 0 ? (
+          result.map((question) => (
             <QuestionCard
               key={question._id}
               _id={question._id}
@@ -69,6 +68,12 @@ const Home = async ({searchParams}: SearchParamsProps) => {
             linkTitle="Ask a Question"
           />
         )}
+      </div>
+      <div className="mt-10">
+        <Pagination
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          isNext={isNext}
+        />
       </div>
     </>
   );
