@@ -11,46 +11,26 @@ import {
   getQuestions,
   getRecommendedQuestions,
 } from "@/lib/actions/question.action";
-// import { SearchParamsProps } from "@/types";
+import { SearchParamsProps } from "@/types";
 import Pagination from "@/components/shared/Pagination";
 import { auth } from "@clerk/nextjs/server";
 
-const Home = async ({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) => {
-  // const result = await getQuestions({
-  //   searchQuery: searchParams.q,
-  //   filter: searchParams.filter,
-  //   page: searchParams.page ? +searchParams.page : 1,
-  // });
-  // console.log(result.questions);
+const Home = async ({ searchParams }: SearchParamsProps) => {
+  let result = await getQuestions({
+    searchQuery: searchParams.q,
+    filter: searchParams.filter,
+    page: searchParams.page ? +searchParams.page : 1,
+  });
+  console.log(result.questions);
 
   const { userId } = await auth();
-  const {
-  filter,
-  q,
-  page: rawPage,
-} = await searchParams  
 
-  let result;
-
-  // const filter = Array.isArray(searchParams.filter)
-  //   ? searchParams.filter[0]
-  //   : searchParams.filter;
-  // const q = Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q;
-  // const pageRaw = Array.isArray(searchParams.page)
-  //   ? searchParams.page[0]
-  //   : searchParams.page;
-  // const page = pageRaw ? +pageRaw : 1;
-
-  const page = rawPage ? +rawPage : 1
-  const filterVal = Array.isArray(filter) ? filter[0] : filter
-  const qVal      = Array.isArray(q)      ? q[0]      : q
-
-  if (filterVal === "recommended") {
+  if (searchParams?.filter === "recommended") {
     if (userId) {
       result = await getRecommendedQuestions({
         userId,
-        searchQuery: qVal,
-        page,
+        searchQuery: searchParams.q,
+        page: searchParams.page ? +searchParams.page : 1,
       });
     } else {
       result = {
@@ -60,9 +40,9 @@ const Home = async ({ searchParams }: { searchParams: Promise<{ [key: string]: s
     }
   } else {
     result = await getQuestions({
-      searchQuery: qVal,
-      filter: filterVal,
-      page,
+      searchQuery: searchParams.q,
+      filter: searchParams.filter,
+      page: searchParams.page ? +searchParams.page : 1,
     });
   }
 
@@ -123,7 +103,7 @@ const Home = async ({ searchParams }: { searchParams: Promise<{ [key: string]: s
       </div>
       <div className="mt-10">
         <Pagination
-          pageNumber={rawPage ? +rawPage : 1}
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
           isNext={result.isNext}
         />
       </div>
