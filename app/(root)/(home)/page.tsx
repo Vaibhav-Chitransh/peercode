@@ -15,7 +15,7 @@ import {
 import Pagination from "@/components/shared/Pagination";
 import { auth } from "@clerk/nextjs/server";
 
-const Home = async ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
+const Home = async ({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) => {
   // const result = await getQuestions({
   //   searchQuery: searchParams.q,
   //   filter: searchParams.filter,
@@ -24,23 +24,32 @@ const Home = async ({ searchParams }: { searchParams: { [key: string]: string | 
   // console.log(result.questions);
 
   const { userId } = await auth();
+  const {
+  filter,
+  q,
+  page: rawPage,
+} = await searchParams  
 
   let result;
 
-  const filter = Array.isArray(searchParams.filter)
-    ? searchParams.filter[0]
-    : searchParams.filter;
-  const q = Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q;
-  const pageRaw = Array.isArray(searchParams.page)
-    ? searchParams.page[0]
-    : searchParams.page;
-  const page = pageRaw ? +pageRaw : 1;
+  // const filter = Array.isArray(searchParams.filter)
+  //   ? searchParams.filter[0]
+  //   : searchParams.filter;
+  // const q = Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q;
+  // const pageRaw = Array.isArray(searchParams.page)
+  //   ? searchParams.page[0]
+  //   : searchParams.page;
+  // const page = pageRaw ? +pageRaw : 1;
 
-  if (filter === "recommended") {
+  const page = rawPage ? +rawPage : 1
+  const filterVal = Array.isArray(filter) ? filter[0] : filter
+  const qVal      = Array.isArray(q)      ? q[0]      : q
+
+  if (filterVal === "recommended") {
     if (userId) {
       result = await getRecommendedQuestions({
         userId,
-        searchQuery: q,
+        searchQuery: qVal,
         page,
       });
     } else {
@@ -51,8 +60,8 @@ const Home = async ({ searchParams }: { searchParams: { [key: string]: string | 
     }
   } else {
     result = await getQuestions({
-      searchQuery: q,
-      filter,
+      searchQuery: qVal,
+      filter: filterVal,
       page,
     });
   }
@@ -114,7 +123,7 @@ const Home = async ({ searchParams }: { searchParams: { [key: string]: string | 
       </div>
       <div className="mt-10">
         <Pagination
-          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          pageNumber={rawPage ? +rawPage : 1}
           isNext={result.isNext}
         />
       </div>
