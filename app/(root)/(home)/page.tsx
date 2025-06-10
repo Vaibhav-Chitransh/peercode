@@ -11,11 +11,11 @@ import {
   getQuestions,
   getRecommendedQuestions,
 } from "@/lib/actions/question.action";
-import { SearchParamsProps } from "@/types";
+// import { SearchParamsProps } from "@/types";
 import Pagination from "@/components/shared/Pagination";
 import { auth } from "@clerk/nextjs/server";
 
-const Home = async ({ searchParams }: SearchParamsProps) => {
+const Home = async ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
   // const result = await getQuestions({
   //   searchQuery: searchParams.q,
   //   filter: searchParams.filter,
