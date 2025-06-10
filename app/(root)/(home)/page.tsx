@@ -15,7 +15,11 @@ import Pagination from "@/components/shared/Pagination";
 import { auth } from "@clerk/nextjs/server";
 
 const Home = async (
-  props: { searchParams: { [key: string]: string | string[] | undefined } } | { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
+  props:
+    | { searchParams: { [key: string]: string | string[] | undefined } }
+    | {
+        searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+      }
 ) => {
   const searchParams = await Promise.resolve(props.searchParams);
 
@@ -108,10 +112,7 @@ const Home = async (
         )}
       </div>
       <div className="mt-10">
-        <Pagination
-          pageNumber={page}
-          isNext={result.isNext}
-        />
+        <Pagination pageNumber={page} isNext={result.isNext} />
       </div>
     </>
   );
