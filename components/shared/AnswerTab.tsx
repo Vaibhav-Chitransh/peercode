@@ -2,6 +2,7 @@
 import { getUserAnswers } from "@/lib/actions/user.action";
 import { SearchParamsProps } from "@/types";
 import AnswerCard from "../cards/AnswerCard";
+import Pagination from "./Pagination";
 
 interface AnswerTabProps extends SearchParamsProps {
   userId: string;
@@ -9,11 +10,17 @@ interface AnswerTabProps extends SearchParamsProps {
 }
 
 const AnswerTab = async ({ searchParams, userId, clerkId }: AnswerTabProps) => {
-  const result = await getUserAnswers({ userId, page: 1 });
-
+  const result = await getUserAnswers({ userId,   page: searchParams.page ? +searchParams.page : 1, });
+  const uniqueQuestionMap = new Map();
+  const uniqueAnswers = result.answers.filter((answer) => {
+    const questionId = answer.question._id.toString();
+    if (uniqueQuestionMap.has(questionId)) return false;
+    uniqueQuestionMap.set(questionId, true);
+    return true;
+  });
   return (
     <>
-      {result.answers.map((item) => (
+      {uniqueAnswers.map((item) => (
         <AnswerCard
           key={item._id}
           clerkId={clerkId}
@@ -24,6 +31,12 @@ const AnswerTab = async ({ searchParams, userId, clerkId }: AnswerTabProps) => {
           createdAt={item.createdAt}
         />
       ))}
+      <div className="mt-10">
+         <Pagination
+        pageNumber={searchParams?.page ? +searchParams.page : 1}
+        isNext={result.isNext}
+      />
+      </div>
     </>
   );
 };
