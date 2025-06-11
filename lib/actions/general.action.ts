@@ -39,7 +39,7 @@ export async function globalSearch(params: SearchParams){
             type,
             id:
               type === "user"
-                ? item.clerkid
+                ? item.clerkId
                 : type === "answer"
                   ? item.question
                   : item._id,
