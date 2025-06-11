@@ -24,7 +24,7 @@ const GlobalSearch = () => {
           // @ts-expect-error
           !searchContainerRef.current.contains(event.target)
         ){
-          setIsOpen(true)
+          setIsOpen(false)
           setSearch('')
         }
       }
