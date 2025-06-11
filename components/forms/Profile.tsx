@@ -69,7 +69,7 @@ const Profile = ({ clerkId, user }: Props) => {
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem className="space-y-3.5">
+            <FormItem className="space-y-3.5 text-dark100_light900">
               <FormLabel>
                 Name<span className="text-primary-500">*</span>
               </FormLabel>
@@ -89,7 +89,7 @@ const Profile = ({ clerkId, user }: Props) => {
           control={form.control}
           name="username"
           render={({ field }) => (
-            <FormItem className="space-y-3.5">
+            <FormItem className="space-y-3.5 text-dark100_light900">
               <FormLabel>
                 Username<span className="text-primary-500">*</span>
               </FormLabel>
@@ -109,7 +109,7 @@ const Profile = ({ clerkId, user }: Props) => {
           control={form.control}
           name="portfolioWebsite"
           render={({ field }) => (
-            <FormItem className="space-y-3.5">
+            <FormItem className="space-y-3.5 text-dark100_light900">
               <FormLabel>Portfolio Link</FormLabel>
               <FormControl>
                 <Input
@@ -128,7 +128,7 @@ const Profile = ({ clerkId, user }: Props) => {
           control={form.control}
           name="location"
           render={({ field }) => (
-            <FormItem className="space-y-3.5">
+            <FormItem className="space-y-3.5 text-dark100_light900">
               <FormLabel>Location</FormLabel>
               <FormControl>
                 <Input
@@ -147,7 +147,7 @@ const Profile = ({ clerkId, user }: Props) => {
           control={form.control}
           name="bio"
           render={({ field }) => (
-            <FormItem className="space-y-3.5">
+            <FormItem className="space-y-3.5 text-dark100_light900">
               <FormLabel>Bio</FormLabel>
               <FormControl>
                 <Textarea

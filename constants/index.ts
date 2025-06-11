@@ -6,7 +6,7 @@ import UsersIcon from "@/assets/icons/users.svg";
 import { SidebarLink } from "@/types/";
 import UserIcon from "@/assets/icons/user.svg";
 import TagIcon from "@/assets/icons/tag.svg";
-import SuitcaseIcon from "@/assets/icons/suitcase.svg";
+import SuitcaseIcon from "@/assets/icons/ranking-stroke-rounded.svg";
 import StarIcon from "@/assets/icons/star.svg";
 import QuestionIcon from "@/assets/icons/question.svg"; 
 
@@ -47,8 +47,8 @@ export const sidebarLinks: SidebarLink[] = [
   },
   {
     imgURL: SuitcaseIcon,
-    route: "/jobs",
-    label: "Find Jobs",
+    route: "/leaderboard",
+    label: "Leaderboard",
   },
   {
     imgURL: TagIcon,
