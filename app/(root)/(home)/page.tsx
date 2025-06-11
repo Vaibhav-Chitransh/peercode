@@ -78,14 +78,18 @@ const Home = async (
           />
         </Suspense>
 
-        <Filter
-          filters={HomePageFilters}
-          otherClasses="min-h-[56px] sm:min-w-[170px]"
-          containerClasses="hidden max-md:flex"
-        />
+        <Suspense fallback={null}>
+          <Filter
+            filters={HomePageFilters}
+            otherClasses="min-h-[56px] sm:min-w-[170px]"
+            containerClasses="hidden max-md:flex"
+          />
+        </Suspense>
       </div>
 
-      <HomeFilters />
+      <Suspense fallback={null}>
+        <HomeFilters />
+      </Suspense>
 
       <div className="mt-10 flex w-full flex-col gap-6">
         {result.questions.length > 0 ? (
@@ -114,7 +118,9 @@ const Home = async (
         )}
       </div>
       <div className="mt-10">
-        <Pagination pageNumber={page} isNext={result.isNext} />
+        <Suspense fallback={null}>
+          <Pagination pageNumber={page} isNext={result.isNext} />
+        </Suspense>
       </div>
     </>
   );
