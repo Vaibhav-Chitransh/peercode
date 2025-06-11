@@ -68,7 +68,7 @@ const Home = async (
       </div>
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
-        <Suspense>
+        <Suspense fallback={null}>
           <LocalSearchbar
             route="/"
             iconPosition="left"
