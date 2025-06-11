@@ -335,3 +335,4 @@ export async function getRecommendedQuestions(params: RecommendedParams) {
     throw error;
   }
 }
+
