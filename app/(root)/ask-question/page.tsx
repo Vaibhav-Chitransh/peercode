@@ -3,7 +3,7 @@ import { getUserById } from "@/lib/actions/user.action";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 // import { redirect } from "next/navigation";
-import React from "react";
+import React, { Suspense } from "react";
 
 const AskQuestion = async () => {
   const { userId } = await auth();
@@ -20,7 +20,11 @@ const AskQuestion = async () => {
     redirect("/sign-up"); // or show an error page if you prefer
   }
 
-  return <AskQuestionClient mongoUserId={JSON.stringify(mongoUser?._id)} />;
+  return (
+    <Suspense>
+      <AskQuestionClient mongoUserId={JSON.stringify(mongoUser?._id)} />
+    </Suspense>
+  );
 };
 
 export default AskQuestion;
