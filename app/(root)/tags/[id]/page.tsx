@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import QuestionCard from "@/components/cards/QuestionCard";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 // import { IQuestion } from '@/database/question.model'
 import { getQuestionByTagId } from "@/lib/actions/tag.action";
 import { URLProps } from "@/types";
-import React from "react";
+import React, { Suspense } from "react";
 import NoResult from "@/components/shared/NoResult";
 import SearchIcon from "@/assets/icons/search.svg";
 import Pagination from "@/components/shared/Pagination";
@@ -18,18 +19,20 @@ const page = async ({ params, searchParams }: URLProps) => {
       <h1 className="h1-bold text-dark100_light900">{result.tagTitle}</h1>
 
       <div className="mt-11 w-full">
-        <LocalSearchbar
-          route={`/tags/${params.id}`}
-          iconPosition="left"
-          imgSrc={SearchIcon}
-          placeholder="Search tag questions"
-          otherClasses="flex-1"
-        />
+        <Suspense>
+          <LocalSearchbar
+            route={`/tags/${params.id}`}
+            iconPosition="left"
+            imgSrc={SearchIcon}
+            placeholder="Search tag questions"
+            otherClasses="flex-1"
+          />
+        </Suspense>
       </div>
 
       <div className="mt-10 flex w-full flex-col gap-6">
         {result.questions.length > 0 ? (
-          result.questions.map((question) => (
+          result.questions.map((question: any) => (
             <QuestionCard
               key={String(question._id)}
               _id={String(question._id)}

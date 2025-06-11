@@ -1,6 +1,6 @@
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import Link from "next/link";
-import React from "react";
+import React, { Suspense } from "react";
 import SearchIcon from "../../../assets/icons/search.svg";
 import Filter from "@/components/shared/Filter";
 import { HomePageFilters } from "@/constants/filters";
@@ -68,13 +68,15 @@ const Home = async (
       </div>
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
-        <LocalSearchbar
-          route="/"
-          iconPosition="left"
-          imgSrc={SearchIcon}
-          placeholder="Search for questions"
-          otherClasses="flex-1"
-        />
+        <Suspense>
+          <LocalSearchbar
+            route="/"
+            iconPosition="left"
+            imgSrc={SearchIcon}
+            placeholder="Search for questions"
+            otherClasses="flex-1"
+          />
+        </Suspense>
 
         <Filter
           filters={HomePageFilters}

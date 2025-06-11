@@ -7,9 +7,10 @@ import { getAllTags } from "@/lib/actions/tag.action";
 import Link from "next/link";
 import { SearchParamsProps } from "@/types";
 import Pagination from "@/components/shared/Pagination";
+import { Suspense } from "react";
 
 const Tags = async ({ searchParams }: SearchParamsProps) => {
-  const {results, isNext} = await getAllTags({
+  const { results, isNext } = await getAllTags({
     searchQuery: searchParams.q,
     filter: searchParams.filter,
     page: searchParams.page ? +searchParams.page : 1,
@@ -21,13 +22,15 @@ const Tags = async ({ searchParams }: SearchParamsProps) => {
       <h1 className="h1-bold text-dark100_light900">All Tags</h1>
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
-        <LocalSearchbar
-          route="/tags"
-          iconPosition="left"
-          imgSrc={SearchIcon}
-          placeholder="Search for tags"
-          otherClasses="flex-1"
-        />
+        <Suspense>
+          <LocalSearchbar
+            route="/tags"
+            iconPosition="left"
+            imgSrc={SearchIcon}
+            placeholder="Search for tags"
+            otherClasses="flex-1"
+          />
+        </Suspense>
 
         <Filter
           filters={TagFilters}
@@ -50,13 +53,13 @@ const Tags = async ({ searchParams }: SearchParamsProps) => {
                       {tag.name}
                     </p>
                   </div>
-                  
+
                   <div className="mt-4 flex-1">
                     <p className="small-medium text-dark400_light500">
                       <span className="body-semibold primary-text-gradient mr-2">
                         {tag.questions.length}+
                       </span>
-                      Question{tag.questions.length !== 1 ? 's' : ''}
+                      Question{tag.questions.length !== 1 ? "s" : ""}
                     </p>
                   </div>
 
@@ -79,7 +82,7 @@ const Tags = async ({ searchParams }: SearchParamsProps) => {
           />
         )}
       </section>
-      
+
       <div className="mt-10">
         <Pagination
           pageNumber={searchParams?.page ? +searchParams.page : 1}

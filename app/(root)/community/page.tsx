@@ -8,9 +8,10 @@ import Link from "next/link";
 import UserCard from "@/components/cards/UserCard";
 import { SearchParamsProps } from "@/types";
 import Pagination from "@/components/shared/Pagination";
+import { Suspense } from "react";
 
 const Community = async ({ searchParams }: SearchParamsProps) => {
-  const {results, isNext} = await getAllUsers({
+  const { results, isNext } = await getAllUsers({
     searchQuery: searchParams.q,
     filter: searchParams.filter,
     page: searchParams.page ? +searchParams.page : 1,
@@ -21,13 +22,15 @@ const Community = async ({ searchParams }: SearchParamsProps) => {
       <h1 className="h1-bold text-dark100_light900">All Users</h1>
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
-        <LocalSearchbar
-          route="/community"
-          iconPosition="left"
-          imgSrc={SearchIcon}
-          placeholder="Search for amazing minds"
-          otherClasses="flex-1"
-        />
+        <Suspense>
+          <LocalSearchbar
+            route="/community"
+            iconPosition="left"
+            imgSrc={SearchIcon}
+            placeholder="Search for amazing minds"
+            otherClasses="flex-1"
+          />
+        </Suspense>
 
         <Filter
           filters={UserFilters}
