@@ -46,7 +46,7 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
 
       <div className="mt-10 flex w-full flex-col gap-6">
         {result.length > 0 ? (
-          result.map((question : any) => (
+          result.map((question: any) => (
             <QuestionCard
               key={question._id}
               _id={question._id}
@@ -71,10 +71,12 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
         )}
       </div>
       <div className="mt-10">
-        <Pagination
-          pageNumber={searchParams?.page ? +searchParams.page : 1}
-          isNext={isNext}
-        />
+        <Suspense fallback={null}>
+          <Pagination
+            pageNumber={searchParams?.page ? +searchParams.page : 1}
+            isNext={isNext}
+          />
+        </Suspense>
       </div>
     </>
   );
