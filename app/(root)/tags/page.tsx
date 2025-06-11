@@ -9,7 +9,7 @@ import { SearchParamsProps } from "@/types";
 import Pagination from "@/components/shared/Pagination";
 
 const Tags = async ({ searchParams }: SearchParamsProps) => {
-  const {results ,isNext} = await getAllTags({
+  const {results, isNext} = await getAllTags({
     searchQuery: searchParams.q,
     filter: searchParams.filter,
     page: searchParams.page ? +searchParams.page : 1,
@@ -35,29 +35,41 @@ const Tags = async ({ searchParams }: SearchParamsProps) => {
         />
       </div>
 
-      <section className="mt-12 flex flex-wrap gap-4">
+      <section className="mt-12">
         {results.length > 0 ? (
-          results.map((tag) => (
-            <Link
-              href={`/tags/${tag._id}`}
-              key={tag._id}
-              className="shadow-light100_darknone"
-            >
-              <article className="background-light900_dark200 light-border flex w-full flex-col rounded-[8px] border px-8 py-10 sm:w-[260px]">
-                <div className="background-light800_dark400 w-fit rounded-[4px] px-5 py-1.5">
-                  <p className="paragraph-semibold text-dark300_light900">
-                    {tag.name}
-                  </p>
-                </div>
-                <p className="small-medium text-dark400_light500 mt-3.5">
-                  <span className="body-semibold primary-text-gradient mr-2.5">
-                    {tag.questions.length}+
-                  </span>{" "}
-                  Questions
-                </p>
-              </article>
-            </Link>
-          ))
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {results.map((tag) => (
+              <Link
+                href={`/tags/${tag._id}`}
+                key={tag._id}
+                className="shadow-light100_darknone w-full"
+              >
+                <article className="background-light900_dark200 light-border flex size-full flex-col rounded-[8px] border p-8 transition-all hover:shadow-md">
+                  <div className="background-light800_dark400 w-fit rounded-[4px] px-4 py-2">
+                    <p className="paragraph-semibold text-dark300_light900 line-clamp-1">
+                      {tag.name}
+                    </p>
+                  </div>
+                  
+                  <div className="mt-4 flex-1">
+                    <p className="small-medium text-dark400_light500">
+                      <span className="body-semibold primary-text-gradient mr-2">
+                        {tag.questions.length}+
+                      </span>
+                      Question{tag.questions.length !== 1 ? 's' : ''}
+                    </p>
+                  </div>
+
+                  {/* Optional: Add a brief description if available */}
+                  {tag.description && (
+                    <p className="small-regular text-dark400_light900 mt-2 line-clamp-2">
+                      {tag.description}
+                    </p>
+                  )}
+                </article>
+              </Link>
+            ))}
+          </div>
         ) : (
           <NoResult
             title="No Tags Found"
@@ -67,12 +79,13 @@ const Tags = async ({ searchParams }: SearchParamsProps) => {
           />
         )}
       </section>
+      
       <div className="mt-10">
-       <Pagination
-        pageNumber={searchParams?.page ? +searchParams.page : 1}
-        isNext={isNext}
-      />
-     </div>
+        <Pagination
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          isNext={isNext}
+        />
+      </div>
     </>
   );
 };

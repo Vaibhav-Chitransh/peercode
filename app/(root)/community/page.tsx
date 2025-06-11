@@ -1,3 +1,4 @@
+// ===== COMMUNITY PAGE (page.tsx) =====
 import Filter from "@/components/shared/Filter";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import SearchIcon from "../../../assets/icons/search.svg";
@@ -9,7 +10,7 @@ import { SearchParamsProps } from "@/types";
 import Pagination from "@/components/shared/Pagination";
 
 const Community = async ({ searchParams }: SearchParamsProps) => {
-  const {results,isNext} = await getAllUsers({
+  const {results, isNext} = await getAllUsers({
     searchQuery: searchParams.q,
     filter: searchParams.filter,
     page: searchParams.page ? +searchParams.page : 1,
@@ -34,9 +35,13 @@ const Community = async ({ searchParams }: SearchParamsProps) => {
         />
       </div>
 
-      <section className="mt-12 flex flex-wrap gap-4">
+      <section className="mt-12">
         {results.length > 0 ? (
-          results.map((user) => <UserCard key={user._id} user={user} />)
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+            {results.map((user) => (
+              <UserCard key={user._id} user={user} />
+            ))}
+          </div>
         ) : (
           <div className="paragraph-regular text-dark200_light800 mx-auto max-w-4xl text-center">
             <p>No Users yet</p>
@@ -46,12 +51,13 @@ const Community = async ({ searchParams }: SearchParamsProps) => {
           </div>
         )}
       </section>
-     <div className="mt-10">
-       <Pagination
-        pageNumber={searchParams?.page ? +searchParams.page : 1}
-        isNext={isNext}
-      />
-     </div>
+
+      <div className="mt-10">
+        <Pagination
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          isNext={isNext}
+        />
+      </div>
     </>
   );
 };

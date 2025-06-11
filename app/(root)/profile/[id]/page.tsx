@@ -1,3 +1,4 @@
+/* eslint-disable tailwindcss/classnames-order */
 import { getUserInfo } from "@/lib/actions/user.action";
 import { URLProps } from "@/types";
 import { SignedIn } from "@clerk/nextjs";
@@ -70,7 +71,7 @@ const page = async ({ params, searchParams }: URLProps) => {
           <SignedIn>
             {clerkId === userInfo.user.clerkId && (
               <Link href="/profile/edit">
-                <button className="paragraph-medium btn-secondary text-dark300_light900 min-h-[46px] min-w-[175px] px-4 py-3">
+                <button className="min-h-[46px] min-w-[175px] px-4 py-3 rounded-[4px] paragraph-medium btn-secondary text-dark300_light900">
                   Edit Profile
                 </button>
               </Link>

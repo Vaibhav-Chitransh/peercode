@@ -20,7 +20,7 @@ import { useEffect } from "react";
 
 import { useRouter } from "next/navigation";
 import { viewQuestion } from "@/lib/actions/interaction.action";
-
+import { toast } from "@/hooks/use-toast";
 
 interface Props {
   type: string;
@@ -44,87 +44,93 @@ const Votes = ({
   hasSaved,
 }: Props) => {
   const pathname = usePathname();
-  const router=useRouter();
+  const router = useRouter();
 
-  const handleSave=async ()=>{
-     await toggleSaveQuestion({
-      userId:JSON.parse(userId),
+  const handleSave = async () => {
+    await toggleSaveQuestion({
+      userId: JSON.parse(userId),
       questionId: JSON.parse(itemId),
       path: pathname,
-     })
-  }
+    });
+
+    return toast({
+        title: `Question ${!hasSaved ?  'Saved in' : 'Removed from'} your collection`,
+        variant: !hasSaved ? 'default' : 'destructive'
+      });
+  };
 
   const handleVote = async (action: string) => {
-      if (!userId) {
-        return;
-        }
-      
-      if (action === "upvote") {
-        if (type === "Question") {
-          await upvoteQuestion({
-            questionId: JSON.parse(itemId),
-            userId: JSON.parse(userId),
-            hasupVoted,
-            hasdownVoted,
-            path: pathname,
-          }); 
-        } else if (type === "Answer") {
-          await upvoteAnswer({
-            answerId: JSON.parse(itemId),
-            userId: JSON.parse(userId),
-            hasupVoted,
-            hasdownVoted,
-            path: pathname,
-          });
-        }
-        
-        //TODO: add a toast
-        return;
-      }
-
-      if (action === "downvote") {
-        if (type === "Question") {
-          await downvoteQuestion({
-            questionId: JSON.parse(itemId),
-            userId: JSON.parse(userId),
-            hasupVoted,
-            hasdownVoted,
-            path: pathname,
-          });
-        } else if (type === "Answer") {
-          await downvoteAnswer({
-            answerId: JSON.parse(itemId),
-            userId: JSON.parse(userId),
-            hasupVoted,
-            hasdownVoted,
-            path: pathname,
-          });
-        }
-
-        //TODO: add a toast
-        return;
-      }
+    if (!userId) {
+      return toast({
+        title: "Please login to vote",
+        description: "Only logged-in users can vote.",
+      });
     }
 
-    useEffect(()=>{
-        viewQuestion({
+    if (action === "upvote") {
+      if (type === "Question") {
+        await upvoteQuestion({
           questionId: JSON.parse(itemId),
-          userId: userId ? JSON.parse(userId) : undefined,
-        })
-    },[itemId,userId,pathname,router])
-  
+          userId: JSON.parse(userId),
+          hasupVoted,
+          hasdownVoted,
+          path: pathname,
+        });
+      } else if (type === "Answer") {
+        await upvoteAnswer({
+          answerId: JSON.parse(itemId),
+          userId: JSON.parse(userId),
+          hasupVoted,
+          hasdownVoted,
+          path: pathname,
+        });
+      }
 
+      return toast({
+        title: `Upvote ${!hasupVoted ?  'Successfull' : 'Removed'}`,
+        variant: !hasupVoted ? 'default' : 'destructive'
+      });
+    }
+
+    if (action === "downvote") {
+      if (type === "Question") {
+        await downvoteQuestion({
+          questionId: JSON.parse(itemId),
+          userId: JSON.parse(userId),
+          hasupVoted,
+          hasdownVoted,
+          path: pathname,
+        });
+      } else if (type === "Answer") {
+        await downvoteAnswer({
+          answerId: JSON.parse(itemId),
+          userId: JSON.parse(userId),
+          hasupVoted,
+          hasdownVoted,
+          path: pathname,
+        });
+      }
+
+      return toast({
+        title: `Downvote ${!hasupVoted ?  'Successfull' : 'Removed'}`,
+        variant: !hasupVoted ? 'default' : 'destructive'
+      });
+    }
+  };
+
+  useEffect(() => {
+    viewQuestion({
+      questionId: JSON.parse(itemId),
+      userId: userId ? JSON.parse(userId) : undefined,
+    });
+  }, [itemId, userId, pathname, router]);
 
   return (
     <div className="flex gap-5">
       <div className="flex-center gap-2.5">
         <div className="flex-center gap-1.5">
           <Image
-            src={
-              hasupVoted
-                ? UpvotedIcon
-                : UpvoteIcon
-            }
+            src={hasupVoted ? UpvotedIcon : UpvoteIcon}
             width={18}
             height={18}
             alt="upvote"
@@ -141,11 +147,7 @@ const Votes = ({
 
         <div className="flex-center gap-1.5">
           <Image
-            src={
-              hasdownVoted
-                ? DownvotedIcon
-                : DownvoteIcon
-            }
+            src={hasdownVoted ? DownvotedIcon : DownvoteIcon}
             width={18}
             height={18}
             alt="downvote"
@@ -161,14 +163,9 @@ const Votes = ({
         </div>
       </div>
 
-
       {type === "Question" && (
         <Image
-          src={
-            hasSaved
-              ? StarFilledIcon
-              : StarRedIcon
-          }
+          src={hasSaved ? StarFilledIcon : StarRedIcon}
           width={18}
           height={18}
           alt="star"
