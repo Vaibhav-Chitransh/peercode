@@ -13,7 +13,11 @@ export const AnswerSchema = z.object({
 export const ProfileSchema = z.object({
   name: z.string().min(5).max(50),
   username: z.string().min(5).max(50),
-  bio: z.string().min(10).max(150).optional(),
-  portfolioWebsite: z.string().url().optional().or(z.literal('')),
-  location: z.string().min(5).max(50).optional(),
-})
+  bio: z.string().min(10).max(150).optional().or(z.literal("")),
+  portfolioWebsite: z.string().url().optional().or(z.literal("")),
+  location: z.string().min(5).max(50).optional().or(z.literal("")),
+  leetcodeId: z.string().min(5).max(50).optional().or(z.literal("")),
+  codeforcesId: z.string().min(5).max(50).optional().or(z.literal("")),
+  codechefId: z.string().min(5).max(50).optional().or(z.literal("")),
+  githubId: z.string().min(5).max(50).optional().or(z.literal("")),
+});
