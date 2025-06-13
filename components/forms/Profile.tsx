@@ -42,6 +42,10 @@ const Profile = ({ clerkId, user }: Props) => {
       portfolioWebsite: parsedUser.portfolioWebiste || '',
       location: parsedUser.location || '',
       bio: parsedUser.bio || '',
+      leetcodeId: parsedUser.leetcodeId || '',
+      codeforcesId: parsedUser.codeforcesId || '',
+      codechefId: parsedUser.codechefId || '',
+      githubId: parsedUser.githubId || '',
     },
   });
 
@@ -50,7 +54,7 @@ const Profile = ({ clerkId, user }: Props) => {
     setIsSubmitting(true);
 
     try {
-        await updateUser({clerkId, updateData: {name: values.name, username: values.username, portfolioWebsite: values.portfolioWebsite, location: values.location, bio: values.bio}, path: pathname})
+        await updateUser({clerkId, updateData: {name: values.name, username: values.username, portfolioWebsite: values.portfolioWebsite, location: values.location, bio: values.bio, leetcodeId: values.leetcodeId, codeforcesId: values.codeforcesId, codechefId: values.codechefId, githubId: values.githubId}, path: pathname})
         router.back();
     } catch (error) {
         console.log(error);
@@ -115,6 +119,82 @@ const Profile = ({ clerkId, user }: Props) => {
                 <Input
                   type="url"
                   placeholder="Your portfolio URL"
+                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border placeholder:text-gray-400 rounded-[6px]"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="leetcodeId"
+          render={({ field }) => (
+            <FormItem className="space-y-3.5 text-dark100_light900">
+              <FormLabel>Leetcode Username</FormLabel>
+              <FormControl>
+                <Input
+                  type="text"
+                  placeholder="Your leetcode username"
+                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border placeholder:text-gray-400 rounded-[6px]"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="codeforcesId"
+          render={({ field }) => (
+            <FormItem className="space-y-3.5 text-dark100_light900">
+              <FormLabel>Codeforces Username</FormLabel>
+              <FormControl>
+                <Input
+                  type="text"
+                  placeholder="Your codeforces username"
+                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border placeholder:text-gray-400 rounded-[6px]"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="codechefId"
+          render={({ field }) => (
+            <FormItem className="space-y-3.5 text-dark100_light900">
+              <FormLabel>Codechef Username</FormLabel>
+              <FormControl>
+                <Input
+                  type="text"
+                  placeholder="Your codechef username"
+                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border placeholder:text-gray-400 rounded-[6px]"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="githubId"
+          render={({ field }) => (
+            <FormItem className="space-y-3.5 text-dark100_light900">
+              <FormLabel>Github Username</FormLabel>
+              <FormControl>
+                <Input
+                  type="text"
+                  placeholder="Your github username"
                   className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border placeholder:text-gray-400 rounded-[6px]"
                   {...field}
                 />

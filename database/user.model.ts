@@ -10,6 +10,10 @@ export interface IUser extends Document {
   picture: string;
   location?: string;
   portfolioWebsite?: string;
+  leetcodeId?: string;
+  codeforcesId?: string;
+  codechefId?: string;
+  githubId?: string;
   reputation?: number;
   saved: Schema.Types.ObjectId[];
   joinedAt: Date;
@@ -25,6 +29,10 @@ const UserSchema = new Schema({
   picture: { type: String, required: true },
   location: { type: String },
   portfolioWebsite: { type: String },
+  leetcodeId: { type: String },
+  codeforcesId: { type: String },
+  codechefId: { type: String },
+  githubId: { type: String },
   reputation: { type: Number, default: 0 },
   saved: [{ type: Schema.Types.ObjectId, ref: "Question" }],
   joinedAt: { type: Date, default: Date.now },
