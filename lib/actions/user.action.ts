@@ -16,7 +16,6 @@ import {
 } from "./shared.types";
 import { revalidatePath } from "next/cache";
 import Question from "@/database/question.model";
-import { error } from "console";
 import { FilterQuery } from "mongoose";
 import Answer from "@/database/answer.model";
 import { BadgeCriteriaType } from "@/types";
@@ -351,6 +350,81 @@ export async function getUserAnswers(params: GetUserStatsParams) {
   }
 }
 
+export async function getCodeforcesStats(handle: string) {
+  try {
+    // Fetch submissions
+    const resSub = await fetch(`https://codeforces.com/api/user.status?handle=${handle}`);
+    const dataSub = await resSub.json();
+    if (dataSub.status !== 'OK') throw new Error(dataSub.comment || 'Error fetching submissions');
+
+    // Fetch rating history
+    const resHist = await fetch(`https://codeforces.com/api/user.rating?handle=${handle}`);
+    const dataHist = await resHist.json();
+    if (dataHist.status !== 'OK') throw new Error(dataHist.comment || 'Error fetching rating history');
+
+    const submissions: any[] = dataSub.result;
+    const ratingChanges: any[] = dataHist.result;
+
+    const solvedSet = new Set<string>();
+    const topicCounts: Record<string, number> = {};
+    const solvedByRating: Record<number, number> = {};
+    const heatmap: Record<string, number> = {};
+    let totalSolved = 0;
+    let highestRating = 0;
+
+    for (const sub of submissions) {
+      if (sub.verdict !== 'OK') continue;
+
+      const pid = `${sub.problem.contestId}-${sub.problem.index}`;
+      if (solvedSet.has(pid)) continue;
+      solvedSet.add(pid);
+      totalSolved++;
+
+      // Tags
+      for (const tag of sub.problem.tags as string[]) {
+        topicCounts[tag] = (topicCounts[tag] || 0) + 1;
+      }
+
+      // Ratings
+      const rating = sub.problem.rating ?? 0;
+      solvedByRating[rating] = (solvedByRating[rating] || 0) + 1;
+
+      // Heatmap
+      const date = new Date(sub.creationTimeSeconds * 1000).toISOString().slice(0, 10);
+      heatmap[date] = (heatmap[date] || 0) + 1;
+    }
+
+    // Contest History
+    const contestHistory = ratingChanges.map((c) => {
+      if (c.newRating > highestRating) highestRating = c.newRating;
+      return {
+        contestId: c.contestId,
+        contestName: c.contestName,
+        date: new Date(c.ratingUpdateTimeSeconds * 1000).toLocaleDateString(),
+        oldRating: c.oldRating,
+        newRating: c.newRating,
+        delta: c.newRating - c.oldRating,
+        rank: c.rank,
+      };
+    });
+
+    return {
+      handle,
+      totalSolved,
+      topics: topicCounts,
+      solvedByRating,
+      heatmap,             
+      highestRating,        
+      contestCount: contestHistory.length,
+      contestHistory,        
+    };
+  } catch (err) {
+    console.error(err);
+    return { handle, error: (err as Error).message };
+  }
+}
+
+
 export async function getLeetCodeStats(username: string) {
   try {
     const response = await fetch("https://leetcode.com/graphql", {
@@ -435,68 +509,6 @@ export async function getLeetCodeStats(username: string) {
   }
 }
 
-export async function getCodeforcesStats(handle: string) {
-  try {
-    // Fetch all submissions
-    const resSub = await fetch(`https://codeforces.com/api/user.status?handle=${handle}`);
-    const dataSub = await resSub.json();
-    if (dataSub.status !== 'OK') throw new Error(dataSub.comment || 'Error fetching submissions');
-
-    // Fetch rating history
-    const resHist = await fetch(`https://codeforces.com/api/user.rating?handle=${handle}`);
-    const dataHist = await resHist.json();
-    if (dataHist.status !== 'OK') throw new Error(dataHist.comment || 'Error fetching rating history');
-
-    const submissions: any[] = dataSub.result;
-    const ratingChanges: any[] = dataHist.result; // rating history objects :contentReference[oaicite:1]{index=1}
-
-    // Aggregate stats
-    const solvedSet = new Set<string>();
-    const topicCounts: Record<string, number> = {};
-    const solvedByRating: Record<number, number> = {};
-    let totalSolved = 0;
-
-    for (const sub of submissions) {
-      if (sub.verdict !== 'OK') continue;
-      const pid = `${sub.problem.contestId}-${sub.problem.index}`;
-      if (solvedSet.has(pid)) continue;
-      solvedSet.add(pid);
-      totalSolved++;
-
-      // Tags
-      for (const tag of sub.problem.tags as string[]) {
-        topicCounts[tag] = (topicCounts[tag] || 0) + 1;
-      }
-
-      // Problem rating
-      const rating = sub.problem.rating ?? 0;
-      solvedByRating[rating] = (solvedByRating[rating] || 0) + 1;
-    }
-
-    // Format contest history
-    const contestHistory = ratingChanges.map(c => ({
-      contestId: c.contestId,
-      contestName: c.contestName,
-      date: new Date(c.ratingUpdateTimeSeconds * 1000).toLocaleDateString(),
-      oldRating: c.oldRating,
-      newRating: c.newRating,
-      delta: c.newRating - c.oldRating,
-    }));
-
-    // Assemble final stats
-    return {
-      handle,
-      totalSolved,
-      topics: topicCounts,
-      solvedByRating,
-      contestCount: contestHistory.length,
-      contestHistory,
-    };
-  } catch (err) {
-    console.error(err);
-    return { handle, error: (err as Error).message };
-  }
-}
 
 export async function getCodechefStats(username: string) {
   try {
@@ -504,8 +516,6 @@ export async function getCodechefStats(username: string) {
     if (!res.ok) throw new Error("Failed to fetch CodeChef stats");
 
     const data = await res.json();
-
-    // Sample fields: data.rating, data.stars, data.globalRank, data.problemsFullySolved, data.contestRankings
 
     return {
       username,
@@ -664,4 +674,3 @@ export async function verifyCodechefProfile(
     return false;
   }
 }
-

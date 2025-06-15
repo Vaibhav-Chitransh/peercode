@@ -6,9 +6,10 @@ import UsersIcon from "@/assets/icons/users.svg";
 import { SidebarLink } from "@/types/";
 import UserIcon from "@/assets/icons/user.svg";
 import TagIcon from "@/assets/icons/tag.svg";
-import SuitcaseIcon from "@/assets/icons/ranking-stroke-rounded.svg";
+import RankingIcon from "@/assets/icons/ranking-stroke-rounded.svg";
 import StarIcon from "@/assets/icons/star.svg";
 import QuestionIcon from "@/assets/icons/question.svg"; 
+import DashboardIcon from "@/assets/icons/dashboard.svg";
 
 
 export const themes = [
@@ -36,9 +37,9 @@ export const sidebarLinks: SidebarLink[] = [
     label: "Home",
   },
   {
-    imgURL: UsersIcon,
-    route: "/community",
-    label: "Community",
+    imgURL: QuestionIcon,
+    route: "/ask-question",
+    label: "Ask a question",
   },
   {
     imgURL: StarIcon,
@@ -46,14 +47,19 @@ export const sidebarLinks: SidebarLink[] = [
     label: "Collections",
   },
   {
-    imgURL: SuitcaseIcon,
-    route: "/leaderboard",
-    label: "Leaderboard",
-  },
-  {
     imgURL: TagIcon,
     route: "/tags",
     label: "Tags",
+  },
+  {
+    imgURL: UsersIcon,
+    route: "/community",
+    label: "Community",
+  },
+  {
+    imgURL: DashboardIcon,
+    route: "/dashboard",
+    label: "Dashboard",
   },
   {
     imgURL: UserIcon,
@@ -61,9 +67,9 @@ export const sidebarLinks: SidebarLink[] = [
     label: "Profile",
   },
   {
-    imgURL: QuestionIcon,
-    route: "/ask-question",
-    label: "Ask a question",
+    imgURL: RankingIcon,
+    route: "/leaderboard",
+    label: "Leaderboard",
   },
 ];
 

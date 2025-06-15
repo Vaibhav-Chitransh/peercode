@@ -14,18 +14,25 @@ import { useTheme } from "@/context/ThemeProvider";
 
 const DashboardFilters = () => {
   const searchParams = useSearchParams();
-  const [active, setActive] = useState("");
   const router = useRouter();
+  const { mode } = useTheme();
 
-  const {mode} = useTheme();
+  // Set initial active filter from URL param
+  const initialFilter = searchParams.get("filter") || "leetcode";
+  const [active, setActive] = useState(initialFilter);
+
+  React.useEffect(() => {
+    setActive(initialFilter);
+  }, [initialFilter]);
 
   const handleTypeClick = (item: string) => {
     if (active === item) {
-      setActive("");
+      // If clicking the active filter, reset to default (leetcode)
+      setActive("leetcode");
       const newUrl = formURLQuery({
         params: searchParams.toString(),
         key: "filter",
-        value: null,
+        value: "leetcode",
       });
       router.push(newUrl, { scroll: false });
     } else {
@@ -57,14 +64,14 @@ const DashboardFilters = () => {
                 item.value === "leetcode"
                   ? LeetCodeIcon
                   : item.value === "codeforces"
-                  ? CodeforcesIcon
-                  : item.value === "codechef"
-                  ? CodechefIcon
-                  : item.value === "github" && mode === 'light'
-                  ? GithubIconLight
-                  : item.value === "github" && mode === 'dark'
-                  ? GithubIconDark
-                  : ""
+                    ? CodeforcesIcon
+                    : item.value === "codechef"
+                      ? CodechefIcon
+                      : item.value === "github" && mode === "light"
+                        ? GithubIconLight
+                        : item.value === "github" && mode === "dark"
+                          ? GithubIconDark
+                          : ""
               }
               alt={`${item.name} Icon`}
             />
