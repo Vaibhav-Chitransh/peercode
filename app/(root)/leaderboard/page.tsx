@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable tailwindcss/classnames-order */
-import DashboardFilters from "@/components/dashboard/DashboardFilters";
+import LeaderboardFilters from "@/components/shared/leaderboard/LeaderboardFilter";
 import LeaderboardList from "@/components/shared/leaderboard/LeaderboardList";
 import TopThree from "@/components/shared/leaderboard/TopThree";
 import UserLeaderboard from "@/components/shared/leaderboard/UserLeaderboard";
@@ -14,6 +14,9 @@ import {
   getCodechefStats,
   getAllUsers,
   getUserById,
+  // verifyLeetcodeProfile,
+  // verifyCodeforcesProfile,
+  // verifyCodechefProfile,
 } from "@/lib/actions/user.action";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
@@ -123,6 +126,22 @@ const Page = async ({
     })
   );
 
+//     const check= await verifyLeetcodeProfile("naveenchhipa","peer-verify");
+//     console.log("leetcode",check);
+
+//    const handle = "vaibhav_chitransh"; // the user's CodeChef ID
+// const token = "xyz"; // the exact text user added in "About Me"
+// console.log("token",token)
+// const verified = await verifyCodeforcesProfile(handle, token);
+// console.log("Codeforces Verified:", verified);
+
+//  const handle1 = "jindal1203"; // the user's CodeChef ID
+// const token1 = "jindal1203"; // the exact text user added in "About Me"
+// console.log("token1",token1)
+// const verified1 = await verifyCodechefProfile(handle1, token1);
+// console.log("Codechef Verified:", verified1);
+
+
   leaderboardData.sort((a, b) => {
     if (filter === "leetcode") {
       if (b.leetcodeScore != a.leetcodeScore) {
@@ -194,7 +213,7 @@ const Page = async ({
   return (
     <div>
       <div className="flex justify-between mt-3">
-        <DashboardFilters />
+        <LeaderboardFilters/>
         <Link
           href="/rating"
         >
