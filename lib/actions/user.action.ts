@@ -16,7 +16,6 @@ import {
 } from "./shared.types";
 import { revalidatePath } from "next/cache";
 import Question from "@/database/question.model";
-import { error } from "console";
 import { FilterQuery } from "mongoose";
 import Answer from "@/database/answer.model";
 import { BadgeCriteriaType } from "@/types";
@@ -351,192 +350,255 @@ export async function getUserAnswers(params: GetUserStatsParams) {
   }
 }
 
-export async function getLeetCodeStats(username: string) {
-  try {
-    const response = await fetch("https://leetcode.com/graphql", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Referer": `https://leetcode.com/${username}/`,
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
-      },
-      body: JSON.stringify({
-        query: `
-          query userStats($username: String!) {
-            matchedUser(username: $username) {
-              submitStats {
-                acSubmissionNum {
-                  difficulty
-                  count
-                }
-              }
-            }
-            userContestRanking(username: $username) {
-              attendedContestsCount
-              rating
-              globalRanking
-              totalParticipants
-              topPercentage
-            }
-            userContestRankingHistory(username: $username) {
-              contest {
-                title
-                startTime
-              }
-              rating
-              attended
-              ranking
-            }
-          }
-        `,
-        variables: { username },
-      }),
-    });
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch stats for ${username}`);
-    }
+// export async function getCodeforcesStats(handle: string) {
+//   try {
+//     // Fetch submissions
+//     const resSub = await fetch(`https://codeforces.com/api/user.status?handle=${handle}`);
+//     const dataSub = await resSub.json();
+//     if (dataSub.status !== 'OK') throw new Error(dataSub.comment || 'Error fetching submissions');
 
-    const json = await response.json();
-    const mu = json.data.matchedUser;
-    const cr = json.data.userContestRanking;
-    const history = json.data.userContestRankingHistory;
+//     // Fetch rating history
+//     const resHist = await fetch(`https://codeforces.com/api/user.rating?handle=${handle}`);
+//     const dataHist = await resHist.json();
+//     if (dataHist.status !== 'OK') throw new Error(dataHist.comment || 'Error fetching rating history');
 
-    if (!mu) throw new Error(`User ${username} not found`);
+//     const submissions: any[] = dataSub.result;
+//     const ratingChanges: any[] = dataHist.result;
 
-    const stats = { Easy: 0, Medium: 0, Hard: 0, Total: 0 };
-    for (const { difficulty, count } of mu.submitStats.acSubmissionNum) {
-      stats[difficulty as keyof typeof stats] = count;
-      if (difficulty === "All") stats.Total = count;
-    }
+//     const solvedSet = new Set<string>();
+//     const topicCounts: Record<string, number> = {};
+//     const solvedByRating: Record<number, number> = {};
+//     const heatmap: Record<string, number> = {};
+//     let totalSolved = 0;
+//     let highestRating = 0;
 
-    const ratingHistory = (history || [])
-      .filter((c: any) => c.attended)
-      .map((c: any) => ({
-        title: c.contest.title,
-        date: new Date(c.contest.startTime * 1000).toLocaleDateString(),
-        rating: Math.round(c.rating),
-        rank: c.ranking ?? "N/A",
-      }));
+//     for (const sub of submissions) {
+//       if (sub.verdict !== 'OK') continue;
 
-    return {
-      username,
-      ...stats,
-      ContestRating: cr?.rating ? Math.round(cr.rating) : null,
-      GlobalRank: cr?.globalRanking ?? null,
-      TopPercent: cr?.topPercentage ?? null,
-      Contests: cr?.attendedContestsCount ?? 0,
-      ContestHistory: ratingHistory,
-    };
-  } catch (err) {
-    console.error(err);
-    return { username, error: (err as Error).message };
-  }
-}
+//       const pid = `${sub.problem.contestId}-${sub.problem.index}`;
+//       if (solvedSet.has(pid)) continue;
+//       solvedSet.add(pid);
+//       totalSolved++;
 
-export async function getCodeforcesStats(handle: string) {
-  try {
-    // Fetch all submissions
-    const resSub = await fetch(`https://codeforces.com/api/user.status?handle=${handle}`);
-    const dataSub = await resSub.json();
-    if (dataSub.status !== 'OK') throw new Error(dataSub.comment || 'Error fetching submissions');
+//       // Tags
+//       for (const tag of sub.problem.tags as string[]) {
+//         topicCounts[tag] = (topicCounts[tag] || 0) + 1;
+//       }
 
-    // Fetch rating history
-    const resHist = await fetch(`https://codeforces.com/api/user.rating?handle=${handle}`);
-    const dataHist = await resHist.json();
-    if (dataHist.status !== 'OK') throw new Error(dataHist.comment || 'Error fetching rating history');
+//       // Ratings
+//       const rating = sub.problem.rating ?? 0;
+//       solvedByRating[rating] = (solvedByRating[rating] || 0) + 1;
 
-    const submissions: any[] = dataSub.result;
-    const ratingChanges: any[] = dataHist.result; // rating history objects :contentReference[oaicite:1]{index=1}
+//       // Heatmap
+//       const date = new Date(sub.creationTimeSeconds * 1000).toISOString().slice(0, 10);
+//       heatmap[date] = (heatmap[date] || 0) + 1;
+//     }
 
-    // Aggregate stats
-    const solvedSet = new Set<string>();
-    const topicCounts: Record<string, number> = {};
-    const solvedByRating: Record<number, number> = {};
-    let totalSolved = 0;
+//     // Contest History
+//     const contestHistory = ratingChanges.map((c) => {
+//       if (c.newRating > highestRating) highestRating = c.newRating;
+//       return {
+//         contestId: c.contestId,
+//         contestName: c.contestName,
+//         date: new Date(c.ratingUpdateTimeSeconds * 1000).toLocaleDateString(),
+//         oldRating: c.oldRating,
+//         newRating: c.newRating,
+//         delta: c.newRating - c.oldRating,
+//         rank: c.rank,
+//       };
+//     });
 
-    for (const sub of submissions) {
-      if (sub.verdict !== 'OK') continue;
-      const pid = `${sub.problem.contestId}-${sub.problem.index}`;
-      if (solvedSet.has(pid)) continue;
-      solvedSet.add(pid);
-      totalSolved++;
+//     return {
+//       handle,
+//       totalSolved,
+//       topics: topicCounts,
+//       solvedByRating,
+//       heatmap,             
+//       highestRating,        
+//       contestCount: contestHistory.length,
+//       contestHistory,        
+//     };
+//   } catch (err) {
+//     console.error(err);
+//     return { handle, error: (err as Error).message };
+//   }
+// }
 
-      // Tags
-      for (const tag of sub.problem.tags as string[]) {
-        topicCounts[tag] = (topicCounts[tag] || 0) + 1;
-      }
 
-      // Problem rating
-      const rating = sub.problem.rating ?? 0;
-      solvedByRating[rating] = (solvedByRating[rating] || 0) + 1;
-    }
+// export async function getLeetCodeStats(username: string) {
+//   try {
+//     const response = await fetch("https://leetcode.com/graphql", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//         "Referer": `https://leetcode.com/${username}/`,
+//         "User-Agent":
+//           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+//       },
+//       body: JSON.stringify({
+//         query: `
+//           query userStats($username: String!) {
+//             matchedUser(username: $username) {
+//               submitStats {
+//                 acSubmissionNum {
+//                   difficulty
+//                   count
+//                 }
+//               }
+//             }
+//             userContestRanking(username: $username) {
+//               attendedContestsCount
+//               rating
+//               globalRanking
+//               totalParticipants
+//               topPercentage
+//             }
+//             userContestRankingHistory(username: $username) {
+//               contest {
+//                 title
+//                 startTime
+//               }
+//               rating
+//               attended
+//               ranking
+//             }
+//           }
+//         `,
+//         variables: { username },
+//       }),
+//     });
 
-    // Format contest history
-    const contestHistory = ratingChanges.map(c => ({
-      contestId: c.contestId,
-      contestName: c.contestName,
-      date: new Date(c.ratingUpdateTimeSeconds * 1000).toLocaleDateString(),
-      oldRating: c.oldRating,
-      newRating: c.newRating,
-      delta: c.newRating - c.oldRating,
-    }));
+//     if (!response.ok) {
+//       throw new Error(`Failed to fetch stats for ${username}`);
+//     }
 
-    // Assemble final stats
-    return {
-      handle,
-      totalSolved,
-      topics: topicCounts,
-      solvedByRating,
-      contestCount: contestHistory.length,
-      contestHistory,
-    };
-  } catch (err) {
-    console.error(err);
-    return { handle, error: (err as Error).message };
-  }
-}
+//     const json = await response.json();
+//     const mu = json.data.matchedUser;
+//     const cr = json.data.userContestRanking;
+//     const history = json.data.userContestRankingHistory;
 
-export async function getCodechefStats(username: string) {
-  try {
-    const res = await fetch(`https://codechef-api.vercel.app/handle/${username}`);
-    if (!res.ok) throw new Error("Failed to fetch CodeChef stats");
+//     if (!mu) throw new Error(`User ${username} not found`);
 
-    const data = await res.json();
+//     const stats = { Easy: 0, Medium: 0, Hard: 0, Total: 0 };
+//     for (const { difficulty, count } of mu.submitStats.acSubmissionNum) {
+//       stats[difficulty as keyof typeof stats] = count;
+//       if (difficulty === "All") stats.Total = count;
+//     }
 
-    // Sample fields: data.rating, data.stars, data.globalRank, data.problemsFullySolved, data.contestRankings
+//     const ratingHistory = (history || [])
+//       .filter((c: any) => c.attended)
+//       .map((c: any) => ({
+//         title: c.contest.title,
+//         date: new Date(c.contest.startTime * 1000).toLocaleDateString(),
+//         rating: Math.round(c.rating),
+//         rank: c.ranking ?? "N/A",
+//       }));
 
-    return {
-      username,
-      currentRating: data.currentRating,
-      highestRating: data.highestRating,
-      stars: data.stars,
-      globalRank: data.globalRank,
-      countryRank: data.countryRank,
-      problemsSolved: data.problemsFullySolved,
-      contestsParticipated: data.contestCount,
-      contestHistory: data.contestHistory, // if available
-    };
-  } catch (err) {
-    console.error(err);
-    return { username, error: (err as Error).message };
-  }
-}
+//     return {
+//       username,
+//       ...stats,
+//       ContestRating: cr?.rating ? Math.round(cr.rating) : null,
+//       GlobalRank: cr?.globalRanking ?? null,
+//       TopPercent: cr?.topPercentage ?? null,
+//       Contests: cr?.attendedContestsCount ?? 0,
+//       ContestHistory: ratingHistory,
+//     };
+//   } catch (err) {
+//     console.error(err);
+//     return { username, error: (err as Error).message };
+//   }
+// }
 
-export async function getCodechefTotalSolved(username: string): Promise<number | null> {
-  try {
-    const res = await fetch(`https://codechef-api.vercel.app/handle/${username}`);
-    if (!res.ok) throw new Error("Failed to fetch CodeChef stats");
 
-    const data = await res.json();
+// export async function getCodechefStats(username: string) {
+//   try {
+//     const res = await fetch(`https://codechef-api.vercel.app/handle/${username}`);
+//     if (!res.ok) throw new Error("Failed to fetch CodeChef stats");
 
-    const fullySolvedCount =
-      data.problemsFullySolved?.["Fully Solved"]?.count ?? null;
+//     const data = await res.json();
 
-    return fullySolvedCount;
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
-}
+//     // Sample fields: data.rating, data.stars, data.globalRank, data.problemsFullySolved, data.contestRankings
+
+//     return {
+//       username,
+//       currentRating: data.currentRating,
+//       highestRating: data.highestRating,
+//       stars: data.stars,
+//       globalRank: data.globalRank,
+//       countryRank: data.countryRank,
+//       heatmap: data.heatmap,
+//       ratingData: data.ratingData, // if available
+//     };
+//   } catch (err) {
+//     console.error(err);
+//     return { username, error: (err as Error).message };
+//   }
+// }
+
+
+// export async function getCodechefStatsWithDetails(username: string) {
+//   try {
+//     const res = await fetch(`https://codechef-api.vercel.app/handle/${username}`);
+//     if (!res.ok) throw new Error("Failed to fetch base CodeChef stats");
+//     const base = await res.json();
+
+//     const profileRes = await fetch(`https://www.codechef.com/users/${username}`);
+//     const html = await profileRes.text();
+
+//     // 1. Fallback values
+//     let fullySolved = base.problemsFullySolved || 0;
+//     let partiallySolved = 0;
+//     let totalContests = 0;
+//     const topicCounts: Record<string, number> = {};
+//     const ratingSeg: Record<string, number> = {};
+
+//     // 2. Try parsing Fully/Partially Solved
+//     const matchFull = html.match(/Fully Solved<\/h5>\s*<h5[^>]*>(\d+)<\/h5>/);
+//     if (matchFull) fullySolved = Number(matchFull[1]);
+
+//     const matchPartial = html.match(/Partially Solved<\/h5>\s*<h5[^>]*>(\d+)<\/h5>/);
+//     if (matchPartial) partiallySolved = Number(matchPartial[1]);
+
+//     // 3. Topic tags & count
+//     const topicRegex = /<a href="\/tags\/[^"]+"[^>]*>([^<]+)<\/a>/g;
+//     let match;
+//     while ((match = topicRegex.exec(html))) {
+//       const tag = match[1];
+//       topicCounts[tag] = (topicCounts[tag] || 0) + 1;
+//     }
+
+//     // 4. Rating-wise problems (optional)
+//     const ratingRegex = /<td>(\d{3,4})<\/td>\s*<td>(\d+)<\/td>/g;
+//     while ((match = ratingRegex.exec(html))) {
+//       const rating = match[1];
+//       const count = parseInt(match[2], 10);
+//       ratingSeg[rating] = count;
+//     }
+
+//     // 5. Contests participated (from header card)
+//     const contestsMatch = html.match(/Contest History<\/strong><\/div>\s*<div[^>]*>(\d+)<\/div>/);
+//     if (contestsMatch) totalContests = Number(contestsMatch[1]);
+
+//     return {
+//       username,
+//       currentRating: base.currentRating,
+//       highestRating: base.highestRating,
+//       stars: base.stars,
+//       globalRank: base.globalRank,
+//       countryRank: base.countryRank,
+//       heatmap: base.heatmap, // preserved
+//       ratingData: base.ratingData, // preserved
+
+//       fullySolved,
+//       partiallySolved,
+//       totalSolved: fullySolved + partiallySolved,
+//       topicCounts,
+//       ratingSeg,
+//       totalContests,
+//     };
+//   } catch (err) {
+//     console.error(err);
+//     return { username, error: (err as Error).message };
+//   }
+// }
