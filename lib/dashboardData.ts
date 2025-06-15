@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import DefaultAvatar from "../public/avatar_default.webp";
 
+const GITHUB_GRAPHQL_URL = "https://api.github.com/graphql";
+const GITHUB_REST_URL = "https://api.github.com";
+
 export async function getCodeforcesStats(handle: string | undefined) {
   try {
     // Fetch user info
@@ -212,4 +215,95 @@ export async function getCodechefStats(username: string | undefined) {
     console.error(err);
     return { username, error: (err as Error).message };
   }
+}
+
+export async function getGithubStats(username: string | undefined) {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+  };
+
+  // 📊 GraphQL: Commits, PRs, Heatmap, Avatar
+  const graphQLQuery = {
+    query: `
+      query {
+        user(login: "${username}") {
+          avatarUrl
+          name
+          contributionsCollection {
+            contributionCalendar {
+              totalContributions
+              weeks {
+                contributionDays {
+                  color
+                  contributionCount
+                  date
+                }
+              }
+            }
+          }
+          pullRequests {
+            totalCount
+          }
+        }
+      }
+    `,
+  };
+
+  const graphQLRes = await fetch(GITHUB_GRAPHQL_URL, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(graphQLQuery),
+  });
+
+  const graphQLData = await graphQLRes.json();
+  const user = graphQLData.data.user;
+
+  const contributions = user.contributionsCollection.contributionCalendar;
+  const totalCommits = contributions.totalContributions;
+  const heatmap = contributions.weeks.flatMap((w: any) => w.contributionDays);
+  const totalPRs = user.pullRequests.totalCount;
+  const profilePic = user.avatarUrl;
+
+  // 📁 REST API: Repos Info
+  const reposRes = await fetch(
+    `${GITHUB_REST_URL}/users/${username}/repos?per_page=100`,
+    { headers }
+  );
+  const repos = await reposRes.json();
+
+  const totalRepos = repos.length;
+  const totalStars = repos.reduce(
+    (sum: number, repo: any) => sum + repo.stargazers_count,
+    0
+  );
+
+  // 🧠 Language % Calculation
+  const langMap: Record<string, number> = {};
+  for (const repo of repos) {
+    if (!repo.fork) {
+      const langRes = await fetch(repo.languages_url, { headers });
+      const langData = await langRes.json();
+      for (const [lang, size] of Object.entries(langData)) {
+        langMap[lang] = (langMap[lang] || 0) + Number(size);
+      }
+    }
+  }
+
+  const totalLangSize = Object.values(langMap).reduce((a, b) => a + b, 0);
+  const languagePercentage = Object.entries(langMap).map(([lang, size]) => ({
+    language: lang,
+    percentage: ((size / totalLangSize) * 100).toFixed(2),
+  }));
+
+  return {
+    name: user.name,
+    profilePic,
+    totalCommits,
+    totalPRs,
+    totalRepos,
+    totalStars,
+    heatmap,
+    languagePercentage,
+  };
 }
