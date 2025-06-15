@@ -540,3 +540,128 @@ export async function getCodechefTotalSolved(username: string): Promise<number |
     return null;
   }
 }
+
+export async function verifyLeetcodeProfile(userId: string, token: string): Promise<boolean> {
+  const response = await fetch("https://leetcode.com/graphql", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      query: `
+        query getUserProfile($username: String!) {
+          matchedUser(username: $username) {
+            profile {
+              realName
+              aboutMe
+            }
+          }
+        }
+      `,
+      variables: { username: userId },
+    }),
+  });
+
+  const data = await response.json();
+  const profile = data?.data?.matchedUser?.profile;
+
+  return (
+    profile?.realName === token || profile?.aboutMe === token
+  );
+}
+
+export async function verifyCodeforcesProfile(
+  handle: string,
+  token: string
+): Promise<boolean> {
+  const res = await fetch(
+    `https://codeforces.com/api/user.info?handles=${handle}`
+  );
+  const json = await res.json();
+  if (json.status !== "OK" || !json.result?.length) return false;
+
+  const user = json.result[0];
+  const first = user.firstName?.trim() || "";
+  const last = user.lastName?.trim() || "";
+
+  console.log(`first ${first} second ${last}`)
+
+  return first === token || last === token;
+}
+
+
+export async function verifyCodechefProfile(
+  handle: string,
+  token: string
+): Promise<boolean> {
+  try {
+    const res = await fetch(`https://www.codechef.com/users/${handle}`, {
+      headers: { 
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+      },
+    });
+
+    if (!res.ok) return false;
+
+    const html = await res.text();
+    
+    // Split HTML and look for name-related sections
+    const lines = html.split('\n');
+    let extractedName = "";
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const lowerLine = line.toLowerCase();
+      
+      // Look for lines that might contain the name
+      if (lowerLine.includes('name') || lowerLine.includes('profile')) {
+        // Check current line and next few lines for name content
+        for (let j = i; j < Math.min(i + 5, lines.length); j++) {
+          const checkLine = lines[j];
+          
+          // Look for content within tags that could be the name
+          const contentMatches = [
+            checkLine.match(/<h[1-6][^>]*>([^<]+)</i),
+            checkLine.match(/<span[^>]*>([^<]+)</i),
+            checkLine.match(/<div[^>]*>([^<]+)</i),
+            checkLine.match(/>([A-Za-z\s]{3,50})</), // Look for name-like text
+          ];
+
+          for (const match of contentMatches) {
+            if (match && match[1]) {
+              const potentialName = match[1].trim();
+              // Filter out obvious non-names (handles, numbers, short text)
+              if (potentialName.length > 2 && 
+                  potentialName.length < 50 && 
+                  /^[A-Za-z\s]+$/.test(potentialName) &&
+                  !potentialName.toLowerCase().includes('codechef') &&
+                  !potentialName.toLowerCase().includes('profile')) {
+                extractedName = potentialName;
+                break;
+              }
+            }
+          }
+          
+          if (extractedName) break;
+        }
+        
+        if (extractedName) break;
+      }
+    }
+
+    console.log("Alternative extraction - Name:", extractedName);
+    
+    // Clean and compare
+    extractedName = extractedName
+      .replace(/&[^;]+;/g, ' ') // Remove HTML entities
+      .replace(/\s+/g, ' ')
+      .trim();
+
+      console.log("extracted name" ,extractedName)
+
+    return extractedName=== token;
+
+  } catch (error) {
+    console.error("Error in alternative name verification:", error);
+    return false;
+  }
+}
+
