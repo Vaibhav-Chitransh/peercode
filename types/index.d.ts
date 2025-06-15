@@ -37,4 +37,44 @@ export interface BadgeCounts {
   SILVER: number;
   BRONZE: number;
 }
+
+export interface LeetCodeStats {
+  Easy?: number;
+  Medium?: number;
+  Hard?: number;
+  ContestRating?: number | null; // <- allow null
+  GlobalRank?: number | null;
+  TopPercent?: number | null;
+  Contests?: number | null;
+  ContestHistory?: number | null;
+  Total?: number;
+  username?: string;
+}
+export interface CodeforcesStats {
+  solvedByRating: Record<number, number>;
+  contestHistory?: { newRating: number }[];
+}
+
+export interface CodechefStats {
+  currentRating: number;
+}
+
+export interface UserStats {
+  _id: string;
+  name: string;
+  username: string;
+  image: string;
+  leetcodeScore: number;
+  codeforcesScore: number;
+  codechefScore: number;
+  pScore: number;
+  lcStats: LeetCodeStats | { error: string };
+  cfStats: CodeforcesStats | { error: string };
+  ccStats: CodechefStats | { error: string };
+}
+
+export interface UserLeaderboardProps {
+  currentUser: UserStats;
+  currentUserRank: number | null;
+}
 export type BadgeCriteriaType = keyof typeof BADGE_CRITERIA;

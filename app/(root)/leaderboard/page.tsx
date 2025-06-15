@@ -1,73 +1,24 @@
+/* eslint-disable tailwindcss/no-custom-classname */
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable tailwindcss/classnames-order */
+import DashboardFilters from "@/components/dashboard/DashboardFilters";
+import LeaderboardList from "@/components/shared/leaderboard/LeaderboardList";
+import TopThree from "@/components/shared/leaderboard/TopThree";
+import UserLeaderboard from "@/components/shared/leaderboard/UserLeaderboard";
+import Pagination from "@/components/shared/Pagination";
 import {
   getLeetCodeStats,
   getCodeforcesStats,
   getCodechefStats,
+  getAllUsers,
+  getUserById,
 } from "@/lib/actions/user.action";
+import { auth } from "@clerk/nextjs/server";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import React from "react";
-
-const users = [
-  {
-    leetcode: "ayanokoji_kiyo",
-    codeforces: "vaibhav_chitransh",
-    codechef: "yagami_lightx",
-  },
-  {
-    leetcode: "naveenchhipa",
-    codeforces: "tourist",
-    codechef: "potato167",
-  },
-  {
-    leetcode: "jindal1203",
-    codeforces: "jiangly",
-    codechef: "noimi",
-  },
-  {
-    leetcode: "Vishal__jain",
-    codeforces: "Radewoosh",
-    codechef: "sansen",
-  },
-  {
-    leetcode: "akshanshjain",
-    codeforces: "Benq",
-    codechef: "nachia",
-  },
-];
-
-type LeetCodeStats = {
-  Easy: number;
-  Medium: number;
-  Hard: number;
-  Total: number;
-  ContestRating: number | null;
-  GlobalRank: any;
-  TopPercent: any;
-  Contests: any;
-  ContestHistory: any[];
-  username: string;
-  error?: undefined;
-};
-
-type CodeforcesStats = {
-  totalSolved: number;
-  topics: Record<string, number>;
-  solvedByRating: Record<number, number>;
-  contestCount: number;
-  contestHistory: any[];
-  error?: undefined;
-};
-
-type CodechefStats = {
-  username: string;
-  currentRating: number | null;
-  highestRating: number | null;
-  problemsSolved: number | null;
-  contestCount?: number;
-  contestHistory?: any[];
-  error?: undefined;
-};
 
 type ErrorObject = {
   error: string;
@@ -75,18 +26,96 @@ type ErrorObject = {
 
 const isError = (data: any): data is ErrorObject => "error" in data;
 
-const Page = async () => {
+const Page = async ({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | undefined };
+}) => {
+  const filter = searchParams.filter || "overall";
+  const page = Number(searchParams.page) || 1;
+  const pageSize = 10;
+  const { userId: clerkId } = await auth();
+  let mongoUser: { _id: any };
+  if (clerkId) {
+    mongoUser = await getUserById({ userId: clerkId });
+  }
+
+  const { results: users } = await getAllUsers({
+    searchQuery: searchParams.q,
+    page:1,
+  });
+
+  // console.log({ users });
+
   const leaderboardData = await Promise.all(
-    users.map(async ({ leetcode, codeforces, codechef }) => {
+    users.map(async (user) => {
       const [lcStats, cfStats, ccStats] = await Promise.all([
-        getLeetCodeStats(leetcode),
-        getCodeforcesStats(codeforces),
-        getCodechefStats(codechef),
+        user.leetcodeId
+          ? getLeetCodeStats(user.leetcodeId)
+          : { error: "No LeetCode ID" },
+        user.codeforcesId
+          ? getCodeforcesStats(user.codeforcesId)
+          : { error: "No Codeforces ID" },
+        user.codechefId
+          ? getCodechefStats(user.codechefId)
+          : { error: "No CodeChef ID" },
       ]);
+
+      let leetcodeScore = 0;
+      let codeforcesScore = 0;
+      let codechefScore = 0;
+
+      if (!("error" in lcStats)) {
+        leetcodeScore =
+          (Number(lcStats?.Easy) || 0) / 2 +
+          (Number(lcStats?.Medium) || 0) +
+          (Number(lcStats?.Hard) || 0) * 2 +
+          (Number(lcStats?.ContestRating) - 1500 || 0);
+      }
+      // console.log("cfStats Type:", typeof cfStats, cfStats);
+
+      if (!("error" in cfStats)) {
+        for (const [rating, count] of Object.entries(cfStats.solvedByRating)) {
+          if (Number(rating) <= 1200) {
+            codeforcesScore += count / 2;
+          } else if (Number(rating) <= 1600) {
+            codeforcesScore += count;
+          } else if (Number(rating) <= 1900) {
+            codeforcesScore += count * 2;
+          } else {
+            codeforcesScore += count * 3;
+          }
+        }
+        if (cfStats.contestHistory && cfStats.contestHistory.length > 0) {
+          const lastContest =
+            cfStats.contestHistory[cfStats.contestHistory.length - 1];
+          codeforcesScore += Number((lastContest.newRating - 800) / 2);
+        }
+      }
+      // console.log({ codeforcesScore });
+        // console.log("ccStats Type:", typeof ccStats, ccStats);
+
+      if (!("error" in ccStats)) {
+        // console.log("ccStats Type:", typeof ccStats, ccStats);
+        codechefScore += Number((ccStats.currentRating - 1000) / 2);
+      }
+      // console.log({ codechefScore });
+      const pScore = filter==="overall"
+      ? Number(leetcodeScore + codechefScore + codeforcesScore)
+      :filter ==="leetcode" ? Number(leetcodeScore)
+      :filter ==="codechef" ? Number(codechefScore)
+      :Number(codeforcesScore);
+      
+
       return {
-        leetcode,
-        codeforces,
-        codechef,
+        _id: user._id,
+        name: user.name,
+        username: user.username,
+        image: user.picture,
+        leetcodeScore,
+        codeforcesScore,
+        codechefScore,
+        pScore,
         lcStats,
         cfStats,
         ccStats,
@@ -94,181 +123,120 @@ const Page = async () => {
     })
   );
 
+  leaderboardData.sort((a, b) => {
+    if (filter === "leetcode") {
+      if (b.leetcodeScore != a.leetcodeScore) {
+        return b.leetcodeScore - a.leetcodeScore;
+      }
+      if (b.codeforcesScore != a.codeforcesScore) {
+        return b.codeforcesScore - a.codeforcesScore;
+      }
+      return b.codechefScore - a.codechefScore;
+    }
+
+    if (filter === "codechef") {
+      if (b.codechefScore != a.codechefScore) {
+        return b.codechefScore - a.codechefScore;
+      }
+      if (b.codeforcesScore != a.codeforcesScore) {
+        return b.codeforcesScore - a.codeforcesScore;
+      }
+      return b.leetcodeScore - a.leetcodeScore;
+    }
+
+    if (filter === "codeforces") {
+      if (b.codeforcesScore != a.codeforcesScore) {
+        return b.codeforcesScore - a.codeforcesScore;
+      }
+      if (b.codechefScore != a.codechefScore) {
+        return b.codechefScore - a.codechefScore;
+      }
+      return b.leetcodeScore - a.leetcodeScore;
+    }
+    // Default: "overall"
+    const aTotal = a.pScore;
+    const bTotal = b.pScore;
+
+    if (bTotal !== aTotal) {
+      return bTotal - aTotal; // Sort by total score
+    }
+
+    if (b.codeforcesScore !== a.codeforcesScore) {
+      return b.codeforcesScore - a.codeforcesScore;
+    }
+
+    if (b.codechefScore !== a.codechefScore) {
+      return b.codechefScore - a.codechefScore;
+    }
+
+    return b.leetcodeScore - a.leetcodeScore;
+  });
+  const startIndex = (page - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedLeaderboard = leaderboardData.slice(startIndex, endIndex);
+  const isNext = leaderboardData.length > endIndex;
+
+  // console.log("filter" ,filter);
+  //  console.log(`sorted list ${leaderboardData}`);
+  const top3 = leaderboardData.slice(0, 3);
+  // const remaining =leaderboardData.slice(3);
+  const currentUserIndex = leaderboardData.findIndex(
+       (ele) => ele._id.toString() === mongoUser?._id.toString()
+    );
+
+  const currentUser = leaderboardData[currentUserIndex];
+  const currentUserRank = currentUserIndex !== -1 ? currentUserIndex + 1 : null;
+    // console.log("current user", currentUser);
+    // top3.map((item) => {
+    //   console.log("items ", item);
+    // });
+
   return (
-    <>
-    <div className="p-8">
-      <h1 className="text-center text-2xl font-bold mb-6">
-        Coding Leaderboard
-      </h1>
-      <div className="grid gap-4 max-w-4xl mx-auto">
-        {leaderboardData.map((user, idx) => (
-          <div
-            key={idx}
-            className="border p-4 rounded shadow bg-white dark:bg-dark-300"
-          >
-            <h2 className="font-semibold text-lg">{user.leetcode}</h2>
-
-            {/* LeetCode Stats */}
-            <div className="mb-4">
-              <h3 className="font-semibold text-base text-yellow-600">
-                🧠 LeetCode Stats
-              </h3>
-              {isError(user.lcStats) ? (
-                <p className="text-red-500">{user.lcStats.error}</p>
-              ) : (
-                <>
-                  <ul className="mt-1 space-y-1">
-                    <li>✅ Easy: {user.lcStats.Easy}</li>
-                    <li>🟡 Medium: {user.lcStats.Medium}</li>
-                    <li>🔴 Hard: {user.lcStats.Hard}</li>
-                    <li>📊 Total Solved: {user.lcStats.Total}</li>
-                    <li>
-                      🏆 Contest Rating: {user.lcStats.ContestRating ?? "N/A"}
-                    </li>
-                    <li>🌍 Global Rank: {user.lcStats.GlobalRank ?? "N/A"}</li>
-                    <li>
-                      🎯 Top %:{" "}
-                      {user.lcStats.TopPercent
-                        ? `${user.lcStats.TopPercent.toFixed(2)}%`
-                        : "N/A"}
-                    </li>
-                    <li>📅 Contests: {user.lcStats.Contests}</li>
-                  </ul>
-
-                  {user.lcStats.ContestHistory?.length > 0 && (
-                    <div className="mt-2">
-                      <h4 className="font-medium">
-                        📈 LeetCode Rating History:
-                      </h4>
-                      <ul className="text-sm mt-1 space-y-1">
-                        {user.lcStats.ContestHistory.map(
-                          (c: any, i: number) => (
-                            <li key={i}>
-                              {c.date} - {c.title}:{" "}
-                              <span className="font-semibold">{c.rating}</span>
-                              {" | Rank: "}
-                              <span className="text-blue-500">{c.rank}</span>
-                            </li>
-                          )
-                        )}
-                      </ul>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-
-            {/* Codeforces Stats */}
-            <div className="mb-4">
-              <h3 className="font-semibold text-base text-blue-600">
-                💻 Codeforces Stats
-              </h3>
-              {isError(user.cfStats) ? (
-                <p className="text-red-500">{user.cfStats.error}</p>
-              ) : (
-                <>
-                  <ul className="mt-1 space-y-1">
-                    <li>📊 Total Solved: {user.cfStats.totalSolved}</li>
-                    <li>
-                      🏷️ Tags Covered:{" "}
-                      {Object.keys(user.cfStats.topics).length}
-                    </li>
-                    <li>📈 Contests: {user.cfStats.contestCount}</li>
-                  </ul>
-
-                  {Object.keys(user.cfStats.solvedByRating).length > 0 && (
-                    <div className="mt-2">
-                      <h4 className="font-medium">📌 Solved by Rating:</h4>
-                      <ul className="text-sm mt-1 flex flex-wrap gap-2">
-                        {Object.entries(user.cfStats.solvedByRating).map(
-                          ([rating, count]: any, i) => (
-                            <li
-                              key={i}
-                              className="bg-gray-100 dark:bg-dark-100 px-2 py-1 rounded"
-                            >
-                              {rating}: {count}
-                            </li>
-                          )
-                        )}
-                      </ul>
-                    </div>
-                  )}
-
-                  {user.cfStats.contestHistory?.length > 0 && (
-                    <div className="mt-2">
-                      <h4 className="font-medium">📊 Contest History:</h4>
-                      <ul className="text-sm mt-1 space-y-1">
-                        {user.cfStats.contestHistory.map(
-                          (c: any, i: number) => (
-                            <li key={i}>
-                              {c.date} - {c.contestName}:{" "}
-                              <span className="font-semibold">
-                                {c.newRating} ({c.delta >= 0 ? "+" : ""}
-                                {c.delta})
-                              </span>
-                            </li>
-                          )
-                        )}
-                      </ul>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-
-            {/* CodeChef Stats */}
-            <div>
-              <h3 className="font-semibold text-base text-purple-600">
-                🍽️ CodeChef Stats
-              </h3>
-              {isError(user.ccStats) ? (
-                <p className="text-red-500">{user.ccStats.error}</p>
-              ) : (
-                <>
-                  <ul className="mt-1 space-y-1">
-                    <li>
-                      📊 Current Rating:{" "}
-                      {user.ccStats.currentRating ?? "N/A"}
-                    </li>
-                    <li>
-                      🔝 Highest Rating:{" "}
-                      {user.ccStats.highestRating ?? "N/A"}
-                    </li>
-                    <li>
-                      🏆 Current Rating:{" "}
-                      {user.ccStats.stars ?? "N/A"}
-                    </li>
-                    <li>
-                      📅 Country Rank:{" "}
-                      {user.ccStats.countryRank ?? "N/A"}
-                    </li>
-                  </ul>
-
-                  {user.ccStats.contestHistory?.length > 0 && (
-                    <div className="mt-2">
-                      <h4 className="font-medium">📊 Contest History:</h4>
-                      <ul className="text-sm mt-1 space-y-1">
-                        {user.ccStats.contestHistory.map(
-                          (c: any, i: number) => (
-                            <li key={i}>
-                              {c.date} - {c.contestName}:{" "}
-                              <span className="font-semibold">
-                                {c.oldRating} ➝ {c.newRating}
-                              </span>
-                            </li>
-                          )
-                        )}
-                      </ul>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          </div>
-        ))}
+    <div>
+      <div className="flex justify-between mt-3">
+        <DashboardFilters />
+        <Link
+          href="/rating"
+        >
+        <p className="text-sm font-semibold text-primary-500 cursor-pointer mt-3 ">How it works?</p>
+        </Link>
       </div>
-    </div>
-    </>
+
+
+
+     <TopThree top3={top3}/> 
+       
+    <div className="w-full max-w-4xl mx-auto p-4">
+  {/* ----- Current User Card -----  */}
+  {currentUser && (
+   
+    <UserLeaderboard currentUser={currentUser} currentUserRank={currentUserRank}/>
+  )}
+
+
+<div className="border border-gray-300 dark:border-dark-400 rounded-[10px]">
+  {/* === Table Header === */}
+  <div className="bg-pink-100 dark:bg-dark-200 text-white flex justify-between py-2 px-4 font-semibold text-sm mb-1 h-11 rounded-t-[10px]">
+    <div className="paragraph-semibold text-dark300_light700 ml-4">User Name</div>
+    <div className="paragraph-semibold text-dark300_light700 mr-10">Rank</div>
+    <div className="paragraph-semibold text-dark300_light700">P Score</div>
+  </div>
+
+  {/* === Leaderboard List === */}
+
+          {paginatedLeaderboard.map((user, index) => (
+            <LeaderboardList key={user._id} user={user} index={startIndex + index}
+            />
+          ))}
+          </div>
+          <div className="mt-6">
+                
+            <Pagination pageNumber={page} isNext={isNext} />
+        </div>
+</div>
+
+</div>
+
   );
 };
 

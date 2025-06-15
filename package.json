@@ -28,6 +28,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "eslint-plugin-tailwindcss": "^3.18.0",
+    "framer-motion": "^12.18.1",
     "html-react-parser": "^5.2.5",
     "leetcode-calendar": "^1.0.1",
     "lucide-react": "^0.511.0",
