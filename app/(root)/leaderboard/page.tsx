@@ -5,8 +5,9 @@
 /* eslint-disable tailwindcss/classnames-order */
 import DashboardFilters from "@/components/dashboard/DashboardFilters";
 import LeaderboardList from "@/components/shared/leaderboard/LeaderboardList";
-import TopThree from "@/components/shared/leaderboard/topThree";
+import TopThree from "@/components/shared/leaderboard/TopThree";
 import UserLeaderboard from "@/components/shared/leaderboard/UserLeaderboard";
+import Pagination from "@/components/shared/Pagination";
 import {
   getLeetCodeStats,
   getCodeforcesStats,
@@ -15,6 +16,7 @@ import {
   getUserById,
 } from "@/lib/actions/user.action";
 import { auth } from "@clerk/nextjs/server";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React from "react";
 
@@ -30,6 +32,8 @@ const Page = async ({
   searchParams: { [key: string]: string | undefined };
 }) => {
   const filter = searchParams.filter || "overall";
+  const page = Number(searchParams.page) || 1;
+  const pageSize = 10;
   const { userId: clerkId } = await auth();
   let mongoUser: { _id: any };
   if (clerkId) {
@@ -38,7 +42,7 @@ const Page = async ({
 
   const { results: users } = await getAllUsers({
     searchQuery: searchParams.q,
-    page: Number(searchParams.page) || 1,
+    page:1,
   });
 
   // console.log({ users });
@@ -89,10 +93,11 @@ const Page = async ({
         }
       }
       // console.log({ codeforcesScore });
+        // console.log("ccStats Type:", typeof ccStats, ccStats);
 
       if (!("error" in ccStats)) {
-        console.log("ccStats Type:", typeof ccStats, ccStats);
-        codechefScore += Number((ccStats.currentRating - 800) / 2);
+        // console.log("ccStats Type:", typeof ccStats, ccStats);
+        codechefScore += Number((ccStats.currentRating - 1000) / 2);
       }
       // console.log({ codechefScore });
       const pScore = filter==="overall"
@@ -166,6 +171,10 @@ const Page = async ({
 
     return b.leetcodeScore - a.leetcodeScore;
   });
+  const startIndex = (page - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedLeaderboard = leaderboardData.slice(startIndex, endIndex);
+  const isNext = leaderboardData.length > endIndex;
 
   // console.log("filter" ,filter);
   //  console.log(`sorted list ${leaderboardData}`);
@@ -184,8 +193,13 @@ const Page = async ({
 
   return (
     <div>
-      <div className="flex justify-start mt-3">
+      <div className="flex justify-between mt-3">
         <DashboardFilters />
+        <Link
+          href="/rating"
+        >
+        <p className="text-sm font-semibold text-primary-500 cursor-pointer mt-3 ">How it works?</p>
+        </Link>
       </div>
 
 
@@ -193,11 +207,13 @@ const Page = async ({
      <TopThree top3={top3}/> 
        
     <div className="w-full max-w-4xl mx-auto p-4">
-  {/* === Current User Card === */}
+  {/* ----- Current User Card -----  */}
   {currentUser && (
    
     <UserLeaderboard currentUser={currentUser} currentUserRank={currentUserRank}/>
   )}
+
+
 <div className="border border-gray-300 dark:border-dark-400 rounded-[10px]">
   {/* === Table Header === */}
   <div className="bg-pink-100 dark:bg-dark-200 text-white flex justify-between py-2 px-4 font-semibold text-sm mb-1 h-11 rounded-t-[10px]">
@@ -208,11 +224,15 @@ const Page = async ({
 
   {/* === Leaderboard List === */}
 
-  {leaderboardData.map((user, index) => (
-    <LeaderboardList key={user._id} user={user} index={index}
-    />
-  ))}
-  </div>
+          {paginatedLeaderboard.map((user, index) => (
+            <LeaderboardList key={user._id} user={user} index={startIndex + index}
+            />
+          ))}
+          </div>
+          <div className="mt-6">
+                
+            <Pagination pageNumber={page} isNext={isNext} />
+        </div>
 </div>
 
 </div>
