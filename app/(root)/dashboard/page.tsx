@@ -8,6 +8,7 @@ import CodeforcesCard from "@/components/dashboard/Codeforces/CodeforcesCard";
 import LeetCodeCard from "@/components/dashboard/LeetCodeStatsCard/LeetCodeCard";
 import CodechefCard from "@/components/dashboard/Codechef/CodechefCard";
 import { redirect } from "next/navigation";
+import GithubCard from "@/components/dashboard/github/GithubCard";
 
 const page = async ({
   searchParams,
@@ -26,6 +27,7 @@ const page = async ({
     leetcodeId?: string;
     codeforcesId?: string;
     codechefId?: string;
+    githubId?: string;
     name?: string;
   } | null = null;
 
@@ -76,6 +78,8 @@ const page = async ({
         <LeetCodeCard username={mongoUser.leetcodeId} name={mongoUser.name} />
       ) : filter === "codechef" ? (
         <CodechefCard username={mongoUser.codechefId} />
+      ) : filter === 'github' ? (
+        <GithubCard username={mongoUser.githubId} />
       ) : (
         <div>Coming soon</div>
       )}

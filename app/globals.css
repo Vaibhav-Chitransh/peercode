@@ -145,11 +145,33 @@ code {
 
 @layer base {
   :root {
-    --chart-1: oklch(72.289% 0.17541 56.718);
-    --chart-2: oklch(0.6 0.118 184.704);
-    --chart-5: oklch(89.276% 0.19296 108.472);
-    --chart-4: oklch(0.828 0.189 84.429);
-    --chart-5: oklch(0.769 0.188 70.08);
+    --chart-legend-bg: #1e293b;
+    --chart-legend-color: #f1f5f9;
+    --chart-1: #4ade80;
+    --chart-2: #60a5fa;
+    --chart-3: #f472b6;
+    --chart-4: #facc15;
+    --chart-5: #34d399;
+    --chart-6: #a78bfa;
+    --chart-7: #fb923c;
+    --chart-8: #38bdf8;
+    --chart-9: #f87171;
+    --chart-10: #fcd34d;
+    --chart-11: #c084fc;
+    --chart-12: #5eead4;
+    --chart-13: #fde68a;
+    --chart-14: #f472b6;
+    --chart-15: #86efac;
+    --chart-16: #93c5fd;
+    --chart-17: #fda4af;
+    --chart-18: #f0abfc;
+    --chart-19: #bef264;
+    --chart-20: #67e8f9;
+    --chart-21: #fb7185;
+    --chart-22: #e879f9;
+    --chart-23: #fcd34d;
+    --chart-24: #c4b5fd;
+    --chart-25: #7dd3fc;
   }
 
   .dark {
