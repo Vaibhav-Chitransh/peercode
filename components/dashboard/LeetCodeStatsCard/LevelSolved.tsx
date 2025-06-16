@@ -13,8 +13,9 @@ import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
 } from "@/components/ui/chart";
+import { useTheme } from "@/context/ThemeProvider";
+import CustomPieTooltip from "@/components/ui/CustomPieTooltip";
 
 const chartConfig = {
   easy: {
@@ -38,6 +39,11 @@ interface Props {
 }
 
 export function LevelSolved({ easy, medium, hard }: Props) {
+  const { mode } = useTheme();
+
+const centerTextColor = mode === "dark" ? "#f3f4f6" : "#111827";
+const subTextColor = mode === "dark" ? "#9ca3af" : "#6b7280";
+
   const totalSolved = easy + medium + hard;
 
   const chartData = [
@@ -59,7 +65,7 @@ export function LevelSolved({ easy, medium, hard }: Props) {
           <PieChart>
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+             content={<CustomPieTooltip />}
             />
             <Pie
               data={chartData}
@@ -79,20 +85,23 @@ export function LevelSolved({ easy, medium, hard }: Props) {
                         textAnchor="middle"
                         dominantBaseline="middle"
                       >
-                        <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className="text-3xl font-bold text-dark100_light900"
-                        >
-                          {totalSolved.toLocaleString()}
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground text-sm"
-                        >
-                          Solved
-                        </tspan>
+                         <tspan
+                            x={viewBox.cx}
+                            y={viewBox.cy}
+                            fontSize="20"
+                            fontWeight="bold"
+                            fill={centerTextColor}
+                          >
+                            {totalSolved.toLocaleString()}
+                          </tspan>
+                          <tspan
+                            x={viewBox.cx}
+                            y={(viewBox.cy || 0) + 24}
+                            fontSize="12"
+                            fill={subTextColor}
+                          >
+                            Solved
+                          </tspan>
                       </text>
                     );
                   }
