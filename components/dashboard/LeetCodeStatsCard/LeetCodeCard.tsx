@@ -28,7 +28,7 @@ const LeetCodeCard = async ({ username, name }: Props) => {
 
   return (
     <>
-      <div className="mb-8 flex gap-4">
+      <div className="mb-8 flex flex-col md:flex-row gap-4">
         <ProfileCard userPic={profilePic} username={username} name={name} />
         <DashboardStatsCard
           type="questions"

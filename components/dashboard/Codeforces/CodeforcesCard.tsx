@@ -36,7 +36,9 @@ const CodeforcesCard = async ({ username }: Props) => {
         <DashboardStatsCard type="contests" count={contestCount} />
       </div>
 
-      <HeatMapComponent heatmap={heatmap} />
+          <div className="hidden sm:block">
+              <HeatMapComponent heatmap={heatmap} />
+          </div>
 
       <RatingChart
         contestData={contestHistory}

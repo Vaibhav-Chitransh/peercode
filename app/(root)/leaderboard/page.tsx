@@ -18,6 +18,7 @@ import {
   // verifyCodeforcesProfile,
   // verifyCodechefProfile,
 } from "@/lib/actions/user.action";
+import { getGithubStats } from "@/lib/dashboardData";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -52,22 +53,33 @@ const Page = async ({
 
   const leaderboardData = await Promise.all(
     users.map(async (user) => {
-      const [lcStats, cfStats, ccStats] = await Promise.all([
+      const [lcStats, cfStats, ccStats,gitStats] = await Promise.all([
         user.leetcodeId
           ? getLeetCodeStats(user.leetcodeId)
           : { error: "No LeetCode ID" },
         user.codeforcesId
           ? getCodeforcesStats(user.codeforcesId)
           : { error: "No Codeforces ID" },
-        user.codechefId
+        user.codechefId 
           ? getCodechefStats(user.codechefId)
           : { error: "No CodeChef ID" },
+         user.githubId
+          ? getGithubStats(user.githubId)
+          : { error: "No Codeforces ID" },
       ]);
+
+      
 
       let leetcodeScore = 0;
       let codeforcesScore = 0;
       let codechefScore = 0;
-
+      let gitScore=0;
+      if(!("error" in gitStats)){
+       gitScore=
+       (Number(gitStats?.totalCommits) || 0)/5 +
+       (Number(gitStats?.totalPRs) || 0)/2;
+      }
+      
       if (!("error" in lcStats)) {
         leetcodeScore =
           (Number(lcStats?.Easy) || 0) / 2 +
@@ -107,6 +119,7 @@ const Page = async ({
       ? Number(leetcodeScore + codechefScore + codeforcesScore)
       :filter ==="leetcode" ? Number(leetcodeScore)
       :filter ==="codechef" ? Number(codechefScore)
+      :filter ==="github" ? Number(gitScore)
       :Number(codeforcesScore);
       
 
@@ -118,6 +131,7 @@ const Page = async ({
         leetcodeScore,
         codeforcesScore,
         codechefScore,
+        gitScore,
         pScore,
         lcStats,
         cfStats,
@@ -150,7 +164,10 @@ const Page = async ({
       if (b.codeforcesScore != a.codeforcesScore) {
         return b.codeforcesScore - a.codeforcesScore;
       }
-      return b.codechefScore - a.codechefScore;
+       if (b.codechefScore != a.codechefScore) {
+        return b.codechefScore - a.codechefScore;
+      }
+      return b.gitScore - a.gitScore;
     }
 
     if (filter === "codechef") {
@@ -160,7 +177,10 @@ const Page = async ({
       if (b.codeforcesScore != a.codeforcesScore) {
         return b.codeforcesScore - a.codeforcesScore;
       }
-      return b.leetcodeScore - a.leetcodeScore;
+      if (b.leetcodeScore != a.leetcodeScore) {
+        return b.leetcodeScore - a.leetcodeScore;
+      }
+       return b.gitScore - a.gitScore;
     }
 
     if (filter === "codeforces") {
@@ -170,8 +190,26 @@ const Page = async ({
       if (b.codechefScore != a.codechefScore) {
         return b.codechefScore - a.codechefScore;
       }
-      return b.leetcodeScore - a.leetcodeScore;
+      if (b.leetcodeScore != a.leetcodeScore) {
+        return b.leetcodeScore - a.leetcodeScore;
+      }
+       return b.gitScore - a.gitScore;
     }
+
+     if (filter === "github") {
+      if (b.gitScore != a.gitScore) {
+        return b.gitScore - a.gitScore;
+      }
+      if (b.codeforcesScore != a.codeforcesScore) {
+        return b.codeforcesScore - a.codeforcesScore;
+      }
+      if (b.codechefScore != a.codechefScore) {
+        return b.codechefScore - a.codechefScore;
+      }
+      
+       return b.leetcodeScore - a.leetcodeScore;
+    }
+
     // Default: "overall"
     const aTotal = a.pScore;
     const bTotal = b.pScore;
@@ -187,8 +225,11 @@ const Page = async ({
     if (b.codechefScore !== a.codechefScore) {
       return b.codechefScore - a.codechefScore;
     }
+     if (b.leetcodeScore !== a.leetcodeScore) {
+      return b.leetcodeScore - a.leetcodeScore;
+    }
 
-    return b.leetcodeScore - a.leetcodeScore;
+    return b.gitScore - a.gitScore;
   });
   const startIndex = (page - 1) * pageSize;
   const endIndex = startIndex + pageSize;

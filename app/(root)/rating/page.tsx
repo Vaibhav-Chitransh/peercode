@@ -30,13 +30,14 @@ const ratingSections = [
     color: "text-blue-400",
   },
   {
-    title: "CodeChef",
+     title: "GitHub",
     description:
-      "CodeChef rating contribution is directly calculated from current rating. Since the rating growth on CodeChef is often faster and less granular compared to platforms like LeetCode, we normalize it by dividing by 2. This ensures fair comparison across all users.",
+      "GitHub contributions reflect the user's real-world coding activity through commits and pull requests. To fairly quantify effort, consistent contribution is rewarded — encouraging code maintenance, collaboration, and open-source activity.",
     breakdown: [
-      "✔ Contribution: \u003cstrong\u003e(Current Rating - 1000) / 2\u003c/strong\u003e"
+      "✔ Every <strong>5 commits</strong> → 1 point",
+      "✔ Every <strong>2 pull requests</strong> → 1 point"
     ],
-    color: "text-purple-500",
+    color: "text-green-500",
   },
 ];
 
