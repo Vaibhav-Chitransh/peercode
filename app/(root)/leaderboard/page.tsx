@@ -47,7 +47,7 @@ const Page = async ({
 
   const leaderboardData = await Promise.all(
     users.map(async (user) => {
-      const [lcStats, cfStats,gitStats] = await Promise.all([
+      const [lcStats, cfStats, gitStats] = await Promise.all([
         user.leetcodeId
           ? getLeetCodeStats(user.leetcodeId)
           : { error: "No LeetCode ID" },
@@ -56,7 +56,7 @@ const Page = async ({
           : { error: "No Codeforces ID" },
          user.githubId
           ? getGithubStats(user.githubId)
-          : { error: "No Github ID" },
+          : { error: "No GitHub ID" },
       ]);
 
       

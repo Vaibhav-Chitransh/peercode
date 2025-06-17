@@ -64,11 +64,11 @@ const DashboardFilters = () => {
                   ? LeetCodeIcon
                   : item.value === "codeforces"
                     ? CodeforcesIcon
-                      : item.value === "github" && mode === "light"
-                        ? GithubIconLight
-                        : item.value === "github" && mode === "dark"
-                          ? GithubIconDark
-                          : ""
+                    : item.value === "github" && mode === "light"
+                      ? GithubIconLight
+                      : item.value === "github" && mode === "dark"
+                        ? GithubIconDark
+                        : ""
               }
               alt={`${item.name} Icon`}
             />

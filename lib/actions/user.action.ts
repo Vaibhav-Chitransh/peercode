@@ -508,8 +508,7 @@ export async function getLeetCodeStats(username: string) {
   }
 }
 
-
-export async function verifyLeetcodeProfile(userId: string, token: string): Promise<boolean> {
+export async function verifyLeetcodeProfile(userId: string | undefined, token: string): Promise<boolean> {
   const response = await fetch("https://leetcode.com/graphql", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -555,4 +554,31 @@ export async function verifyCodeforcesProfile(
   return first === token || last === token;
 }
 
+export async function verifyGithubProfile(
+  username: string,
+  token: string
+): Promise<boolean> {
+  try {
+    const response = await fetch(`https://api.github.com/users/${username}`, {
+      headers: {
+        Accept: "application/vnd.github+json",
+      },
+    });
 
+    if (!response.ok) {
+      console.error("GitHub user not found:", response.status);
+      return false;
+    }
+
+    const data = await response.json();
+    const name = data?.name?.trim() || "";
+    const bio = data?.bio?.trim() || "";
+
+    console.log(`GitHub name: ${name}, bio: ${bio}`);
+
+    return name === token || bio === token;
+  } catch (err) {
+    console.error("Error verifying GitHub profile:", err);
+    return false;
+  }
+}

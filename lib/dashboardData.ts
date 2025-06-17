@@ -193,7 +193,6 @@ export async function getLeetCodeStats(username: string | undefined) {
   }
 }
 
-
 export async function getGithubStats(username: string | undefined) {
   const headers = {
     "Content-Type": "application/json",

@@ -20,6 +20,9 @@ import { Button } from "../ui/button";
 import { ProfileSchema } from "@/lib/validations";
 import { usePathname, useRouter } from "next/navigation";
 import { updateUser } from "@/lib/actions/user.action";
+import ProfileVerificationDialog from "./ProfileVerificationDialog";
+import TrashIcon from "../../assets/icons/trash.svg";
+import Image from "next/image";
 
 interface Props {
   clerkId: string;
@@ -37,15 +40,14 @@ const Profile = ({ clerkId, user }: Props) => {
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
-      name: parsedUser.name || '',
-      username: parsedUser.username || '',
-      portfolioWebsite: parsedUser.portfolioWebiste || '',
-      location: parsedUser.location || '',
-      bio: parsedUser.bio || '',
-      leetcodeId: parsedUser.leetcodeId || '',
-      codeforcesId: parsedUser.codeforcesId || '',
-      codechefId: parsedUser.codechefId || '',
-      githubId: parsedUser.githubId || '',
+      name: parsedUser.name || "",
+      username: parsedUser.username || "",
+      portfolioWebsite: parsedUser.portfolioWebsite || "",
+      location: parsedUser.location || "",
+      bio: parsedUser.bio || "",
+      leetcodeId: parsedUser.leetcodeId || "",
+      codeforcesId: parsedUser.codeforcesId || "",
+      githubId: parsedUser.githubId || "",
     },
   });
 
@@ -54,14 +56,37 @@ const Profile = ({ clerkId, user }: Props) => {
     setIsSubmitting(true);
 
     try {
-        await updateUser({clerkId, updateData: {name: values.name, username: values.username, portfolioWebsite: values.portfolioWebsite, location: values.location, bio: values.bio, leetcodeId: values.leetcodeId, codeforcesId: values.codeforcesId, codechefId: values.codechefId, githubId: values.githubId}, path: pathname})
-        router.back();
+      await updateUser({
+        clerkId,
+        updateData: {
+          name: values.name,
+          username: values.username,
+          portfolioWebsite: values.portfolioWebsite,
+          location: values.location,
+          bio: values.bio,
+          leetcodeId: values.leetcodeId,
+          codeforcesId: values.codeforcesId,
+          githubId: values.githubId,
+        },
+        path: pathname ?? "",
+      });
+      router.back();
     } catch (error) {
-        console.log(error);
+      console.log(error);
     } finally {
-        setIsSubmitting(false);
+      setIsSubmitting(false);
     }
   }
+
+  const handleDelete = async (platform: string) => {
+    await updateUser({
+      clerkId,
+      updateData: {
+        [`${platform}Verified`]: false,
+      },
+      path: "",
+    });
+  };
 
   return (
     <Form {...form}>
@@ -135,12 +160,35 @@ const Profile = ({ clerkId, user }: Props) => {
             <FormItem className="space-y-3.5 text-dark100_light900">
               <FormLabel>Leetcode Username</FormLabel>
               <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Your leetcode username"
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border placeholder:text-gray-400 rounded-[6px]"
-                  {...field}
-                />
+                <div className="flex gap-4 justify-center items-center">
+                  <Input
+                    type="text"
+                    placeholder="Your leetcode username"
+                    className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border placeholder:text-gray-400 rounded-[6px]"
+                    {...field}
+                  />
+                  <div>
+                    {!parsedUser.leetcodeVerified ? (
+                      <ProfileVerificationDialog
+                        clerkId={clerkId}
+                        platform="leetcode"
+                        userId={field.value}
+                        onVerified={() => {
+                          console.log("Verified successfully!");
+                        }}
+                      />
+                    ) : (
+                      <Image
+                        src={TrashIcon}
+                        alt="Verified"
+                        width={30}
+                        height={30}
+                        className="dark:invert cursor-pointer"
+                        onClick={() => handleDelete("leetcode")}
+                      />
+                    )}
+                  </div>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -154,31 +202,35 @@ const Profile = ({ clerkId, user }: Props) => {
             <FormItem className="space-y-3.5 text-dark100_light900">
               <FormLabel>Codeforces Username</FormLabel>
               <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Your codeforces username"
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border placeholder:text-gray-400 rounded-[6px]"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="codechefId"
-          render={({ field }) => (
-            <FormItem className="space-y-3.5 text-dark100_light900">
-              <FormLabel>Codechef Username</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Your codechef username"
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border placeholder:text-gray-400 rounded-[6px]"
-                  {...field}
-                />
+                <div className="flex gap-4 justify-center items-center">
+                  <Input
+                    type="text"
+                    placeholder="Your codeforces username"
+                    className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border placeholder:text-gray-400 rounded-[6px]"
+                    {...field}
+                  />
+                  <div>
+                    {!parsedUser.codeforcesVerified ? (
+                      <ProfileVerificationDialog
+                        clerkId={clerkId}
+                        platform="codeforces"
+                        userId={field.value}
+                        onVerified={() => {
+                          console.log("Verified successfully!");
+                        }}
+                      />
+                    ) : (
+                      <Image
+                        src={TrashIcon}
+                        alt="Verified"
+                        width={30}
+                        height={30}
+                        className="dark:invert cursor-pointer"
+                        onClick={() => handleDelete("codeforces")}
+                      />
+                    )}
+                  </div>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -192,12 +244,35 @@ const Profile = ({ clerkId, user }: Props) => {
             <FormItem className="space-y-3.5 text-dark100_light900">
               <FormLabel>Github Username</FormLabel>
               <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Your github username"
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border placeholder:text-gray-400 rounded-[6px]"
-                  {...field}
-                />
+                <div className="flex gap-4 justify-center items-center">
+                  <Input
+                    type="text"
+                    placeholder="Your github username"
+                    className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border placeholder:text-gray-400 rounded-[6px]"
+                    {...field}
+                  />
+                  <div>
+                    {!parsedUser.githubVerified ? (
+                      <ProfileVerificationDialog
+                        clerkId={clerkId}
+                        platform="github"
+                        userId={field.value}
+                        onVerified={() => {
+                          console.log("Verified successfully!");
+                        }}
+                      />
+                    ) : (
+                      <Image
+                        src={TrashIcon}
+                        alt="Verified"
+                        width={30}
+                        height={30}
+                        className="dark:invert cursor-pointer"
+                        onClick={() => handleDelete("github")}
+                      />
+                    )}
+                  </div>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>

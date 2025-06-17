@@ -12,12 +12,14 @@ export interface IUser extends Document {
   portfolioWebsite?: string;
   leetcodeId?: string;
   codeforcesId?: string;
-  codechefId?: string;
   githubId?: string;
   reputation?: number;
   saved: Schema.Types.ObjectId[];
   joinedAt: Date;
-}
+  leetcodeVerified?: boolean;
+  codeforcesVerified?: boolean;
+  githubVerified?: boolean;
+};
 
 const UserSchema = new Schema({
   clerkId: { type: String, required: true, unique: true },
@@ -31,11 +33,13 @@ const UserSchema = new Schema({
   portfolioWebsite: { type: String },
   leetcodeId: { type: String },
   codeforcesId: { type: String },
-  codechefId: { type: String },
   githubId: { type: String },
   reputation: { type: Number, default: 0 },
   saved: [{ type: Schema.Types.ObjectId, ref: "Question" }],
   joinedAt: { type: Date, default: Date.now },
+  leetcodeVerified: { type: Boolean, default: false },
+  codeforcesVerified: { type: Boolean, default: false },
+  githubVerified: { type: Boolean, default: false },
 });
 
 const User = models.User || model<IUser>("User", UserSchema);
