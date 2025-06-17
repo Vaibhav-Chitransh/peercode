@@ -43,6 +43,5 @@ export const GlobalSearchFilters = [
 export const DashboardPageFilters = [
   { name: "Leetcode", value: "leetcode" },
   { name: "Codeforces", value: "codeforces" },
-  { name: "Codechef", value: "codechef" },
   { name: "Github", value: "github" },
 ];

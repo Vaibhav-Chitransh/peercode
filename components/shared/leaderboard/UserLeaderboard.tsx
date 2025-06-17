@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-img-element */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { UserLeaderboardProps } from '@/types'
 import React from 'react'
 

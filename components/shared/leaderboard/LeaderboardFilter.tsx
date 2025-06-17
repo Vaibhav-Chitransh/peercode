@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import LeetCodeIcon from "@/assets/icons/leetcodeIcon.svg";
 import CodeforcesIcon from "@/assets/icons/codeforcesIcon.svg";
-import CodechefIcon from "@/assets/icons/codechefIcon.png";
 import GithubIconLight from "@/assets/icons/githubIcon.svg";
 import GithubIconDark from "@/assets/icons/github.svg";
 import Image from "next/image";
@@ -58,8 +57,6 @@ const LeaderboardFilters = () => {
                   ? LeetCodeIcon
                   : item.value === "codeforces"
                   ? CodeforcesIcon
-                  : item.value === "codechef"
-                  ? CodechefIcon
                   : item.value === "github" && mode === 'light'
                   ? GithubIconLight
                   : item.value === "github" && mode === 'dark'

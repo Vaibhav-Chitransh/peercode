@@ -1,5 +1,3 @@
-/* eslint-disable tailwindcss/no-custom-classname */
-/* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable tailwindcss/classnames-order */
@@ -11,12 +9,8 @@ import Pagination from "@/components/shared/Pagination";
 import {
   getLeetCodeStats,
   getCodeforcesStats,
-  getCodechefStats,
   getAllUsers,
   getUserById,
-  // verifyLeetcodeProfile,
-  // verifyCodeforcesProfile,
-  // verifyCodechefProfile,
 } from "@/lib/actions/user.action";
 import { getGithubStats } from "@/lib/dashboardData";
 import { auth } from "@clerk/nextjs/server";
@@ -53,26 +47,22 @@ const Page = async ({
 
   const leaderboardData = await Promise.all(
     users.map(async (user) => {
-      const [lcStats, cfStats, ccStats,gitStats] = await Promise.all([
+      const [lcStats, cfStats,gitStats] = await Promise.all([
         user.leetcodeId
           ? getLeetCodeStats(user.leetcodeId)
           : { error: "No LeetCode ID" },
         user.codeforcesId
           ? getCodeforcesStats(user.codeforcesId)
           : { error: "No Codeforces ID" },
-        user.codechefId 
-          ? getCodechefStats(user.codechefId)
-          : { error: "No CodeChef ID" },
          user.githubId
           ? getGithubStats(user.githubId)
-          : { error: "No Codeforces ID" },
+          : { error: "No Github ID" },
       ]);
 
       
 
       let leetcodeScore = 0;
       let codeforcesScore = 0;
-      let codechefScore = 0;
       let gitScore=0;
       if(!("error" in gitStats)){
        gitScore=
@@ -107,18 +97,10 @@ const Page = async ({
           codeforcesScore += Number((lastContest.newRating - 800) / 2);
         }
       }
-      // console.log({ codeforcesScore });
-        // console.log("ccStats Type:", typeof ccStats, ccStats);
-
-      if (!("error" in ccStats)) {
-        // console.log("ccStats Type:", typeof ccStats, ccStats);
-        codechefScore += Number((ccStats.currentRating - 1000) / 2);
-      }
-      // console.log({ codechefScore });
+     
       const pScore = filter==="overall"
-      ? Number(leetcodeScore + codechefScore + codeforcesScore)
+      ? Number(leetcodeScore + gitScore + codeforcesScore)
       :filter ==="leetcode" ? Number(leetcodeScore)
-      :filter ==="codechef" ? Number(codechefScore)
       :filter ==="github" ? Number(gitScore)
       :Number(codeforcesScore);
       
@@ -130,12 +112,11 @@ const Page = async ({
         image: user.picture,
         leetcodeScore,
         codeforcesScore,
-        codechefScore,
         gitScore,
         pScore,
         lcStats,
         cfStats,
-        ccStats,
+        gitStats,
       };
     })
   );
@@ -143,17 +124,11 @@ const Page = async ({
 //     const check= await verifyLeetcodeProfile("naveenchhipa","peer-verify");
 //     console.log("leetcode",check);
 
-//    const handle = "vaibhav_chitransh"; // the user's CodeChef ID
 // const token = "xyz"; // the exact text user added in "About Me"
 // console.log("token",token)
 // const verified = await verifyCodeforcesProfile(handle, token);
 // console.log("Codeforces Verified:", verified);
 
-//  const handle1 = "jindal1203"; // the user's CodeChef ID
-// const token1 = "jindal1203"; // the exact text user added in "About Me"
-// console.log("token1",token1)
-// const verified1 = await verifyCodechefProfile(handle1, token1);
-// console.log("Codechef Verified:", verified1);
 
 
   leaderboardData.sort((a, b) => {
@@ -164,31 +139,13 @@ const Page = async ({
       if (b.codeforcesScore != a.codeforcesScore) {
         return b.codeforcesScore - a.codeforcesScore;
       }
-       if (b.codechefScore != a.codechefScore) {
-        return b.codechefScore - a.codechefScore;
-      }
       return b.gitScore - a.gitScore;
     }
 
-    if (filter === "codechef") {
-      if (b.codechefScore != a.codechefScore) {
-        return b.codechefScore - a.codechefScore;
-      }
-      if (b.codeforcesScore != a.codeforcesScore) {
-        return b.codeforcesScore - a.codeforcesScore;
-      }
-      if (b.leetcodeScore != a.leetcodeScore) {
-        return b.leetcodeScore - a.leetcodeScore;
-      }
-       return b.gitScore - a.gitScore;
-    }
 
     if (filter === "codeforces") {
       if (b.codeforcesScore != a.codeforcesScore) {
         return b.codeforcesScore - a.codeforcesScore;
-      }
-      if (b.codechefScore != a.codechefScore) {
-        return b.codechefScore - a.codechefScore;
       }
       if (b.leetcodeScore != a.leetcodeScore) {
         return b.leetcodeScore - a.leetcodeScore;
@@ -202,9 +159,6 @@ const Page = async ({
       }
       if (b.codeforcesScore != a.codeforcesScore) {
         return b.codeforcesScore - a.codeforcesScore;
-      }
-      if (b.codechefScore != a.codechefScore) {
-        return b.codechefScore - a.codechefScore;
       }
       
        return b.leetcodeScore - a.leetcodeScore;
@@ -222,9 +176,6 @@ const Page = async ({
       return b.codeforcesScore - a.codeforcesScore;
     }
 
-    if (b.codechefScore !== a.codechefScore) {
-      return b.codechefScore - a.codechefScore;
-    }
      if (b.leetcodeScore !== a.leetcodeScore) {
       return b.leetcodeScore - a.leetcodeScore;
     }

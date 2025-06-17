@@ -7,7 +7,6 @@ const Loading = () => {
             <Skeleton className="mx-4 h-10 w-28"/>
             <Skeleton className="mx-4 h-10 w-28"/>
             <Skeleton className="mx-4 h-10 w-28"/>
-            <Skeleton className="mx-4 h-10 w-28"/>
         </div>
 
         <div className="mx-auto">
