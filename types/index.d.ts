@@ -55,8 +55,9 @@ export interface CodeforcesStats {
   contestHistory?: { newRating: number }[];
 }
 
-export interface CodechefStats {
-  currentRating: number;
+export interface GithubStats {
+  totalCommits: number;
+  totalPRs: number;
 }
 
 export interface UserStats {
@@ -66,11 +67,11 @@ export interface UserStats {
   image: string;
   leetcodeScore: number;
   codeforcesScore: number;
-  codechefScore: number;
+  gitScore: number;
   pScore: number;
   lcStats: LeetCodeStats | { error: string };
   cfStats: CodeforcesStats | { error: string };
-  ccStats: CodechefStats | { error: string };
+  gitStats: GithubStats | { error: string };
 }
 
 export interface UserLeaderboardProps {

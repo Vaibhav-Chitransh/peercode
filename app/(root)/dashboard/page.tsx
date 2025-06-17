@@ -6,7 +6,6 @@ import { auth } from "@clerk/nextjs/server";
 import { getUserById } from "@/lib/actions/user.action";
 import CodeforcesCard from "@/components/dashboard/Codeforces/CodeforcesCard";
 import LeetCodeCard from "@/components/dashboard/LeetCodeStatsCard/LeetCodeCard";
-import CodechefCard from "@/components/dashboard/Codechef/CodechefCard";
 import { redirect } from "next/navigation";
 import GithubCard from "@/components/dashboard/github/GithubCard";
 
@@ -26,7 +25,6 @@ const page = async ({
     _id: any;
     leetcodeId?: string;
     codeforcesId?: string;
-    codechefId?: string;
     githubId?: string;
     name?: string;
   } | null = null;
@@ -49,10 +47,7 @@ const page = async ({
   //   cfStats = await getCodeforcesStats(mongoUser.codeforcesId);
   // }
 
-  // let ccStats = null;
-  // if (mongoUser.codechefId) {
-  //   ccStats = await getCodechefStats(mongoUser.codechefId);
-  // }
+  
 
   // const totalQues = (lcStats?.Total ?? 0) + (cfStats?.totalSolved ?? 0);
   // const totalContests = (lcStats?.Contests ?? 0) + cfStats?.contestCount;
@@ -76,9 +71,7 @@ const page = async ({
         <CodeforcesCard username={mongoUser.codeforcesId} />
       ) : filter === "leetcode" ? (
         <LeetCodeCard username={mongoUser.leetcodeId} name={mongoUser.name} />
-      ) : filter === "codechef" ? (
-        <CodechefCard username={mongoUser.codechefId} />
-      ) : filter === 'github' ? (
+      )  : filter === 'github' ? (
         <GithubCard username={mongoUser.githubId} />
       ) : (
         <div>Coming soon</div>

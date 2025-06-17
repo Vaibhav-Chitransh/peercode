@@ -70,7 +70,7 @@ export default function RatingWorkingPage() {
         className="text-dark400_light700 mb-8 text-base"
       >
         The leaderboard rating system is designed to give a fair and motivating way
-        to compare performance across platforms like LeetCode, Codeforces, and CodeChef.
+        to compare performance across platforms like LeetCode, Codeforces, and Github.
         It accounts for both the difficulty of problems you solve and your contest ratings,
         turning them into a unified score. Here&apos;s how it works for each platform:
       </motion.p>
