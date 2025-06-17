@@ -21,7 +21,6 @@ const CodeforcesCard = async ({ username }: Props) => {
     contestHistory,
     level,
     highestRating,
-    topics,
     currRating,
     solvedByRating
   } = cfStats;
