@@ -25,6 +25,14 @@ const LeftSidebar = () => {
             }
           }
 
+          if(item.route === '/dashboard') {
+            if(userId) {
+              item.route = `${item.route}/${userId}`
+            } else {
+              return null;
+            }
+          }
+
           return (
               <Link
               href={item.route}

@@ -193,30 +193,6 @@ export async function getLeetCodeStats(username: string | undefined) {
   }
 }
 
-export async function getCodechefStats(username: string | undefined) {
-  try {
-    const res = await fetch(`https://codechef-api.vercel.app/handle/${username}`);
-    if (!res.ok) throw new Error("Failed to fetch CodeChef stats");
-
-    const data = await res.json();
-
-    return {
-      profilePic: data.profile ?? DefaultAvatar,
-      name: data.name,
-      currentRating: data.currentRating,
-      highestRating: data.highestRating,
-      stars: data.stars,
-      globalRank: data.globalRank,
-      countryRank: data.countryRank,
-      heatmap: data.heatmap ?? [],
-      ratingData: data.ratingData ?? [],
-    };
-  } catch (err) {
-    console.error(err);
-    return { username, error: (err as Error).message };
-  }
-}
-
 export async function getGithubStats(username: string | undefined) {
   const headers = {
     "Content-Type": "application/json",

@@ -6,19 +6,16 @@ import { auth } from "@clerk/nextjs/server";
 import { getUserById } from "@/lib/actions/user.action";
 import CodeforcesCard from "@/components/dashboard/Codeforces/CodeforcesCard";
 import LeetCodeCard from "@/components/dashboard/LeetCodeStatsCard/LeetCodeCard";
-import CodechefCard from "@/components/dashboard/Codechef/CodechefCard";
 import { redirect } from "next/navigation";
 import GithubCard from "@/components/dashboard/github/GithubCard";
+import { URLProps } from "@/types";
+import NoData from "@/components/dashboard/NoData";
 
-const page = async ({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | undefined };
-}) => {
+const page = async ({ params, searchParams }: URLProps) => {
   const filter = searchParams.filter;
 
   if (!filter) {
-    redirect("/dashboard?filter=leetcode");
+    redirect(`/dashboard/${params.id}?filter=leetcode`);
   }
 
   const { userId: clerkId } = await auth();
@@ -26,9 +23,11 @@ const page = async ({
     _id: any;
     leetcodeId?: string;
     codeforcesId?: string;
-    codechefId?: string;
     githubId?: string;
     name?: string;
+    codeforcesVerified: boolean;
+    leetcodeVerified: boolean;
+    githubVerified: boolean;
   } | null = null;
 
   if (clerkId) {
@@ -38,27 +37,6 @@ const page = async ({
   if (!mongoUser) {
     return <div>Please sign in to access dashboard</div>;
   }
-
-  // let lcStats = null;
-  // if (mongoUser.leetcodeId) {
-  //   lcStats = await getLeetCodeStats(mongoUser.leetcodeId);
-  // }
-
-  // let cfStats = null;
-  // if (mongoUser.codeforcesId) {
-  //   cfStats = await getCodeforcesStats(mongoUser.codeforcesId);
-  // }
-
-  // let ccStats = null;
-  // if (mongoUser.codechefId) {
-  //   ccStats = await getCodechefStats(mongoUser.codechefId);
-  // }
-
-  // const totalQues = (lcStats?.Total ?? 0) + (cfStats?.totalSolved ?? 0);
-  // const totalContests = (lcStats?.Contests ?? 0) + cfStats?.contestCount;
-
-  // const ccStars = ccStats?.stars;
-  // const globalRank = ccStats?.globalRank;
 
   return (
     <div>
@@ -73,15 +51,25 @@ const page = async ({
       </div>
 
       {filter === "codeforces" ? (
-        <CodeforcesCard username={mongoUser.codeforcesId} />
+        mongoUser.codeforcesVerified ? (
+          <CodeforcesCard username={mongoUser.codeforcesId} />
+        ) : (
+          <NoData />
+        )
       ) : filter === "leetcode" ? (
-        <LeetCodeCard username={mongoUser.leetcodeId} name={mongoUser.name} />
-      ) : filter === "codechef" ? (
-        <CodechefCard username={mongoUser.codechefId} />
-      ) : filter === 'github' ? (
-        <GithubCard username={mongoUser.githubId} />
+        mongoUser.leetcodeVerified ? (
+          <LeetCodeCard username={mongoUser.leetcodeId} name={mongoUser.name} />
+        ) : (
+          <NoData />
+        )
+      ) : filter === "github" ? (
+        mongoUser.githubVerified ? (
+          <GithubCard username={mongoUser.githubId} />
+        ) : (
+          <NoData />
+        )
       ) : (
-        <div>Coming soon</div>
+        <div className="text-dark100_light900">This Page does not exist</div>
       )}
     </div>
   );

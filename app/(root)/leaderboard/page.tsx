@@ -1,5 +1,3 @@
-/* eslint-disable tailwindcss/no-custom-classname */
-/* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable tailwindcss/classnames-order */
@@ -11,7 +9,6 @@ import Pagination from "@/components/shared/Pagination";
 import {
   getLeetCodeStats,
   getCodeforcesStats,
-  getCodechefStats,
   getAllUsers,
   getUserById,
   // verifyLeetcodeProfile,
@@ -53,26 +50,22 @@ const Page = async ({
 
   const leaderboardData = await Promise.all(
     users.map(async (user) => {
-      const [lcStats, cfStats, ccStats,gitStats] = await Promise.all([
+      const [lcStats, cfStats, gitStats] = await Promise.all([
         user.leetcodeId
           ? getLeetCodeStats(user.leetcodeId)
           : { error: "No LeetCode ID" },
         user.codeforcesId
           ? getCodeforcesStats(user.codeforcesId)
           : { error: "No Codeforces ID" },
-        user.codechefId 
-          ? getCodechefStats(user.codechefId)
-          : { error: "No CodeChef ID" },
          user.githubId
           ? getGithubStats(user.githubId)
-          : { error: "No Codeforces ID" },
+          : { error: "No GitHub ID" },
       ]);
 
       
 
       let leetcodeScore = 0;
       let codeforcesScore = 0;
-      let codechefScore = 0;
       let gitScore=0;
       if(!("error" in gitStats)){
        gitScore=
@@ -110,15 +103,14 @@ const Page = async ({
       // console.log({ codeforcesScore });
         // console.log("ccStats Type:", typeof ccStats, ccStats);
 
-      if (!("error" in ccStats)) {
-        // console.log("ccStats Type:", typeof ccStats, ccStats);
-        codechefScore += Number((ccStats.currentRating - 1000) / 2);
-      }
+      // if (!("error" in ccStats)) {
+      //   // console.log("ccStats Type:", typeof ccStats, ccStats);
+      //   codechefScore += Number((ccStats.currentRating - 1000) / 2);
+      // }
       // console.log({ codechefScore });
       const pScore = filter==="overall"
-      ? Number(leetcodeScore + codechefScore + codeforcesScore)
+      ? Number(leetcodeScore + codeforcesScore)
       :filter ==="leetcode" ? Number(leetcodeScore)
-      :filter ==="codechef" ? Number(codechefScore)
       :filter ==="github" ? Number(gitScore)
       :Number(codeforcesScore);
       
@@ -130,12 +122,10 @@ const Page = async ({
         image: user.picture,
         leetcodeScore,
         codeforcesScore,
-        codechefScore,
         gitScore,
         pScore,
         lcStats,
         cfStats,
-        ccStats,
       };
     })
   );
@@ -164,32 +154,32 @@ const Page = async ({
       if (b.codeforcesScore != a.codeforcesScore) {
         return b.codeforcesScore - a.codeforcesScore;
       }
-       if (b.codechefScore != a.codechefScore) {
-        return b.codechefScore - a.codechefScore;
-      }
+      //  if (b.codechefScore != a.codechefScore) {
+      //   return b.codechefScore - a.codechefScore;
+      // }
       return b.gitScore - a.gitScore;
     }
 
-    if (filter === "codechef") {
-      if (b.codechefScore != a.codechefScore) {
-        return b.codechefScore - a.codechefScore;
-      }
-      if (b.codeforcesScore != a.codeforcesScore) {
-        return b.codeforcesScore - a.codeforcesScore;
-      }
-      if (b.leetcodeScore != a.leetcodeScore) {
-        return b.leetcodeScore - a.leetcodeScore;
-      }
-       return b.gitScore - a.gitScore;
-    }
+    // if (filter === "codechef") {
+    //   if (b.codechefScore != a.codechefScore) {
+    //     return b.codechefScore - a.codechefScore;
+    //   }
+    //   if (b.codeforcesScore != a.codeforcesScore) {
+    //     return b.codeforcesScore - a.codeforcesScore;
+    //   }
+    //   if (b.leetcodeScore != a.leetcodeScore) {
+    //     return b.leetcodeScore - a.leetcodeScore;
+    //   }
+    //    return b.gitScore - a.gitScore;
+    // }
 
     if (filter === "codeforces") {
       if (b.codeforcesScore != a.codeforcesScore) {
         return b.codeforcesScore - a.codeforcesScore;
       }
-      if (b.codechefScore != a.codechefScore) {
-        return b.codechefScore - a.codechefScore;
-      }
+      // if (b.codechefScore != a.codechefScore) {
+      //   return b.codechefScore - a.codechefScore;
+      // }
       if (b.leetcodeScore != a.leetcodeScore) {
         return b.leetcodeScore - a.leetcodeScore;
       }
@@ -203,9 +193,9 @@ const Page = async ({
       if (b.codeforcesScore != a.codeforcesScore) {
         return b.codeforcesScore - a.codeforcesScore;
       }
-      if (b.codechefScore != a.codechefScore) {
-        return b.codechefScore - a.codechefScore;
-      }
+      // if (b.codechefScore != a.codechefScore) {
+      //   return b.codechefScore - a.codechefScore;
+      // }
       
        return b.leetcodeScore - a.leetcodeScore;
     }
@@ -222,9 +212,9 @@ const Page = async ({
       return b.codeforcesScore - a.codeforcesScore;
     }
 
-    if (b.codechefScore !== a.codechefScore) {
-      return b.codechefScore - a.codechefScore;
-    }
+    // if (b.codechefScore !== a.codechefScore) {
+    //   return b.codechefScore - a.codechefScore;
+    // }
      if (b.leetcodeScore !== a.leetcodeScore) {
       return b.leetcodeScore - a.leetcodeScore;
     }

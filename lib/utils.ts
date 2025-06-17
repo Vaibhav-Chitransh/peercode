@@ -115,3 +115,14 @@ export const assignBadges = (params: BadgeParam) => {
 
   return badgeCounts;
 }
+
+export function generateVerificationToken(length = 8): string {
+  const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let token = "";
+  const array = new Uint32Array(length);
+  window.crypto.getRandomValues(array);
+  for (let i = 0; i < length; i++) {
+    token += charset[array[i] % charset.length];
+  }
+  return token;
+}

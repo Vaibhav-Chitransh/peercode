@@ -18,6 +18,5 @@ export const ProfileSchema = z.object({
   location: z.string().min(5).max(50).optional().or(z.literal("")),
   leetcodeId: z.string().min(5).max(50).optional().or(z.literal("")),
   codeforcesId: z.string().min(5).max(50).optional().or(z.literal("")),
-  codechefId: z.string().min(5).max(50).optional().or(z.literal("")),
   githubId: z.string().min(5).max(50).optional().or(z.literal("")),
 });

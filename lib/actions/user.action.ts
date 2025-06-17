@@ -508,49 +508,7 @@ export async function getLeetCodeStats(username: string) {
   }
 }
 
-
-export async function getCodechefStats(username: string) {
-  try {
-    const res = await fetch(`https://codechef-api.vercel.app/handle/${username}`);
-    if (!res.ok) throw new Error("Failed to fetch CodeChef stats");
-
-    const data = await res.json();
-
-    return {
-      username,
-      currentRating: data.currentRating,
-      highestRating: data.highestRating,
-      stars: data.stars,
-      globalRank: data.globalRank,
-      countryRank: data.countryRank,
-      problemsSolved: data.problemsFullySolved,
-      contestsParticipated: data.contestCount,
-      contestHistory: data.contestHistory, // if available
-    };
-  } catch (err) {
-    console.error(err);
-    return { username, error: (err as Error).message };
-  }
-}
-
-export async function getCodechefTotalSolved(username: string): Promise<number | null> {
-  try {
-    const res = await fetch(`https://codechef-api.vercel.app/handle/${username}`);
-    if (!res.ok) throw new Error("Failed to fetch CodeChef stats");
-
-    const data = await res.json();
-
-    const fullySolvedCount =
-      data.problemsFullySolved?.["Fully Solved"]?.count ?? null;
-
-    return fullySolvedCount;
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
-}
-
-export async function verifyLeetcodeProfile(userId: string, token: string): Promise<boolean> {
+export async function verifyLeetcodeProfile(userId: string | undefined, token: string): Promise<boolean> {
   const response = await fetch("https://leetcode.com/graphql", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -596,80 +554,31 @@ export async function verifyCodeforcesProfile(
   return first === token || last === token;
 }
 
-
-export async function verifyCodechefProfile(
-  handle: string,
+export async function verifyGithubProfile(
+  username: string,
   token: string
 ): Promise<boolean> {
   try {
-    const res = await fetch(`https://www.codechef.com/users/${handle}`, {
-      headers: { 
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    const response = await fetch(`https://api.github.com/users/${username}`, {
+      headers: {
+        Accept: "application/vnd.github+json",
       },
     });
 
-    if (!res.ok) return false;
-
-    const html = await res.text();
-    
-    // Split HTML and look for name-related sections
-    const lines = html.split('\n');
-    let extractedName = "";
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      const lowerLine = line.toLowerCase();
-      
-      // Look for lines that might contain the name
-      if (lowerLine.includes('name') || lowerLine.includes('profile')) {
-        // Check current line and next few lines for name content
-        for (let j = i; j < Math.min(i + 5, lines.length); j++) {
-          const checkLine = lines[j];
-          
-          // Look for content within tags that could be the name
-          const contentMatches = [
-            checkLine.match(/<h[1-6][^>]*>([^<]+)</i),
-            checkLine.match(/<span[^>]*>([^<]+)</i),
-            checkLine.match(/<div[^>]*>([^<]+)</i),
-            checkLine.match(/>([A-Za-z\s]{3,50})</), // Look for name-like text
-          ];
-
-          for (const match of contentMatches) {
-            if (match && match[1]) {
-              const potentialName = match[1].trim();
-              // Filter out obvious non-names (handles, numbers, short text)
-              if (potentialName.length > 2 && 
-                  potentialName.length < 50 && 
-                  /^[A-Za-z\s]+$/.test(potentialName) &&
-                  !potentialName.toLowerCase().includes('codechef') &&
-                  !potentialName.toLowerCase().includes('profile')) {
-                extractedName = potentialName;
-                break;
-              }
-            }
-          }
-          
-          if (extractedName) break;
-        }
-        
-        if (extractedName) break;
-      }
+    if (!response.ok) {
+      console.error("GitHub user not found:", response.status);
+      return false;
     }
 
-    console.log("Alternative extraction - Name:", extractedName);
-    
-    // Clean and compare
-    extractedName = extractedName
-      .replace(/&[^;]+;/g, ' ') // Remove HTML entities
-      .replace(/\s+/g, ' ')
-      .trim();
+    const data = await response.json();
+    const name = data?.name?.trim() || "";
+    const bio = data?.bio?.trim() || "";
 
-      console.log("extracted name" ,extractedName)
+    console.log(`GitHub name: ${name}, bio: ${bio}`);
 
-    return extractedName=== token;
-
-  } catch (error) {
-    console.error("Error in alternative name verification:", error);
+    return name === token || bio === token;
+  } catch (err) {
+    console.error("Error verifying GitHub profile:", err);
     return false;
   }
 }
