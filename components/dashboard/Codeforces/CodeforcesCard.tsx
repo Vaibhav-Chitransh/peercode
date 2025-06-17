@@ -26,8 +26,6 @@ const CodeforcesCard = async ({ username }: Props) => {
     solvedByRating
   } = cfStats;
 
-  console.log(topics);
-
   return (
     <>
       <div className="mb-8 flex gap-4">

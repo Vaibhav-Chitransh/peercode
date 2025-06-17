@@ -43,7 +43,7 @@ export async function POST(req: Request) {
       "svix-signature": svix_signature,
     }) as WebhookEvent;
   } catch (err) {
-    console.error("Error: Could not verify webhook:", err);
+    // console.error("Error: Could not verify webhook:", err);
     return new Response("Error: Verification error", {
       status: 400,
     });
@@ -53,8 +53,8 @@ export async function POST(req: Request) {
   // For this guide, log payload to console
   const { id } = evt.data;
   const eventType = evt.type;
-  console.log(`Received webhook with ID ${id} and event type of ${eventType}`);
-  console.log("Webhook payload:", body);
+  // console.log(`Received webhook with ID ${id} and event type of ${eventType}`);
+  // console.log("Webhook payload:", body);
 
   if (evt.type == "user.created") {
     const { id, email_addresses, image_url, username, first_name, last_name } =

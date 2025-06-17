@@ -2,7 +2,6 @@
 import DashboardFilters from "@/components/dashboard/DashboardFilters";
 import Filter from "@/components/shared/Filter";
 import { DashboardPageFilters } from "@/constants/filters";
-import { auth } from "@clerk/nextjs/server";
 import { getUserById } from "@/lib/actions/user.action";
 import CodeforcesCard from "@/components/dashboard/Codeforces/CodeforcesCard";
 import LeetCodeCard from "@/components/dashboard/LeetCodeStatsCard/LeetCodeCard";
@@ -18,7 +17,7 @@ const page = async ({ params, searchParams }: URLProps) => {
     redirect(`/dashboard/${params.id}?filter=leetcode`);
   }
 
-  const { userId: clerkId } = await auth();
+  const clerkId = params.id;
   let mongoUser: {
     _id: any;
     leetcodeId?: string;

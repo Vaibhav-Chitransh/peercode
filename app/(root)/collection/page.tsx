@@ -21,7 +21,7 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
     filter: searchParams.filter,
     page: searchParams.page ? +searchParams.page : 1,
   });
-  console.log(result);
+  // console.log(result);
 
   return (
     <>

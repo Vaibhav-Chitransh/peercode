@@ -15,7 +15,7 @@ const Tags = async ({ searchParams }: SearchParamsProps) => {
     filter: searchParams.filter,
     page: searchParams.page ? +searchParams.page : 1,
   });
-  console.log({ results });
+  // console.log({ results });
 
   return (
     <>

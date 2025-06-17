@@ -10,13 +10,13 @@ const AskQuestion = async () => {
   // const userId = "clerk_abc123";
 
   if (!userId) {
-    console.log("User not authenticated");
+    // console.log("User not authenticated");
     redirect("/sign-in");
   }
 
   const mongoUser = await getUserById({ userId });
   if (!mongoUser) {
-    console.log("User not found in database");
+    // console.log("User not found in database");
     redirect("/sign-up"); // or show an error page if you prefer
   }
 

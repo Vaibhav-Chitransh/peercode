@@ -60,7 +60,7 @@ export function RatingChart({ contestData, level, highestRating, currRating }: P
      if (!contestData || contestData.length === 0) return null;
     
   // Debug logs
-  console.log("Theme mode:", mode);
+  // console.log("Theme mode:", mode);
 
   // Safe client-side dark mode detection
 const isDarkMode = typeof window !== 'undefined' ? (
@@ -70,11 +70,11 @@ const isDarkMode = typeof window !== 'undefined' ? (
   document.documentElement.getAttribute('data-theme') === 'dark'
 ) : mode === "dark";
 
-console.log("Is dark mode:", isDarkMode);
+// console.log("Is dark mode:", isDarkMode);
 
 // Proper conditional logic with fallback detection
 const axisTickColor = typeof window !== 'undefined' && isDarkMode ? "#ffffff" : "#1f2937";
-console.log("Axis tick color:", axisTickColor);
+// console.log("Axis tick color:", axisTickColor);
 
   const chartData = contestData.map((c) => ({
     date: c.date,

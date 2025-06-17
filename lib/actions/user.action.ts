@@ -549,7 +549,7 @@ export async function verifyCodeforcesProfile(
   const first = user.firstName?.trim() || "";
   const last = user.lastName?.trim() || "";
 
-  console.log(`first ${first} second ${last}`)
+  // console.log(`first ${first} second ${last}`)
 
   return first === token || last === token;
 }
@@ -574,7 +574,7 @@ export async function verifyGithubProfile(
     const name = data?.name?.trim() || "";
     const bio = data?.bio?.trim() || "";
 
-    console.log(`GitHub name: ${name}, bio: ${bio}`);
+    // console.log(`GitHub name: ${name}, bio: ${bio}`);
 
     return name === token || bio === token;
   } catch (err) {

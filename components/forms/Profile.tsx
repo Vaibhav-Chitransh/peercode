@@ -165,6 +165,7 @@ const Profile = ({ clerkId, user }: Props) => {
                     type="text"
                     placeholder="Your leetcode username"
                     className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border placeholder:text-gray-400 rounded-[6px]"
+                    disabled={parsedUser.leetcodeVerified}
                     {...field}
                   />
                   <div>
@@ -207,6 +208,7 @@ const Profile = ({ clerkId, user }: Props) => {
                     type="text"
                     placeholder="Your codeforces username"
                     className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border placeholder:text-gray-400 rounded-[6px]"
+                    disabled={parsedUser.codeforcesVerified}
                     {...field}
                   />
                   <div>
@@ -249,6 +251,7 @@ const Profile = ({ clerkId, user }: Props) => {
                     type="text"
                     placeholder="Your github username"
                     className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700 min-h-[56px] border placeholder:text-gray-400 rounded-[6px]"
+                    disabled={parsedUser.githubVerified}
                     {...field}
                   />
                   <div>

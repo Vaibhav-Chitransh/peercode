@@ -15,7 +15,7 @@ export async function createAnswer(params: CreateAnswerParams) {
     const { content, author, question, path } = params;
     const newAnswer = await Answer.create({ content, author, question });
     // await newAnswer.save();
-    console.log("new Answer", newAnswer);
+    // console.log("new Answer", newAnswer);
 
     // Add the answer to the question-answer array
 

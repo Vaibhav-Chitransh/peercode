@@ -107,6 +107,7 @@ const Page = async ({
 
       return {
         _id: user._id,
+        clerkId: user.clerkId,
         name: user.name,
         username: user.username,
         image: user.picture,
@@ -221,7 +222,9 @@ const Page = async ({
   {/* ----- Current User Card -----  */}
   {currentUser && (
    
-    <UserLeaderboard currentUser={currentUser} currentUserRank={currentUserRank}/>
+    <Link href={`/dashboard/${currentUser.clerkId}`}>
+      <UserLeaderboard currentUser={currentUser} currentUserRank={currentUserRank}/>
+    </Link>
   )}
 
 
@@ -236,8 +239,10 @@ const Page = async ({
   {/* === Leaderboard List === */}
 
           {paginatedLeaderboard.map((user, index) => (
-            <LeaderboardList key={user._id} user={user} index={startIndex + index}
+            <Link href={`/dashboard/${user.clerkId}`} key={index}>
+            <LeaderboardList user={user} index={startIndex + index}
             />
+            </Link>
           ))}
           </div>
           <div className="mt-6">

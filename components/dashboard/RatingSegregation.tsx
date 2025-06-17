@@ -44,7 +44,7 @@ export function RatingSegregation({ solvedByRating }: Props) {
     ? document.documentElement.classList.contains("dark")
     : mode === "dark";
   const tickColor = isDarkMode ? "#f3f4f6" : "#1f2937"; // lightGray / darkGray
-  console.log("Dark Mode?", isDarkMode, "Tick Color:", tickColor);
+  // console.log("Dark Mode?", isDarkMode, "Tick Color:", tickColor);
   const chartData = solvedByRating
     ? Object.entries(solvedByRating).map(([rating, count]) => ({
         rating: `${rating}`,
