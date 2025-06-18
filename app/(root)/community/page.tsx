@@ -22,7 +22,7 @@ const Community = async ({ searchParams }: SearchParamsProps) => {
       <h1 className="h1-bold text-dark100_light900">All Users</h1>
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
-        <Suspense>
+        <Suspense fallback={<div>Loading Search Bar...</div>}>
           <LocalSearchbar
             route="/community"
             iconPosition="left"
@@ -32,10 +32,12 @@ const Community = async ({ searchParams }: SearchParamsProps) => {
           />
         </Suspense>
 
-        <Filter
-          filters={UserFilters}
-          otherClasses="min-h-[56px] sm:min-w-[170px]"
-        />
+        <Suspense fallback={<div>Loading Filters...</div>}>
+          <Filter
+            filters={UserFilters}
+            otherClasses="min-h-[56px] sm:min-w-[170px]"
+          />
+        </Suspense>
       </div>
 
       <section className="mt-12">
@@ -56,10 +58,12 @@ const Community = async ({ searchParams }: SearchParamsProps) => {
       </section>
 
       <div className="mt-10">
-        <Pagination
-          pageNumber={searchParams?.page ? +searchParams.page : 1}
-          isNext={isNext}
-        />
+        <Suspense fallback={<div>Loading Pagination...</div>}>
+          <Pagination
+            pageNumber={searchParams?.page ? +searchParams.page : 1}
+            isNext={isNext}
+          />
+        </Suspense>
       </div>
     </>
   );

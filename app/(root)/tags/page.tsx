@@ -32,10 +32,12 @@ const Tags = async ({ searchParams }: SearchParamsProps) => {
           />
         </Suspense>
 
-        <Filter
-          filters={TagFilters}
-          otherClasses="min-h-[56px] sm:min-w-[170px]"
-        />
+        <Suspense fallback={<div>Loading Filters...</div>}>
+          <Filter
+            filters={TagFilters}
+            otherClasses="min-h-[56px] sm:min-w-[170px]"
+          />
+        </Suspense>
       </div>
 
       <section className="mt-12">
@@ -84,7 +86,7 @@ const Tags = async ({ searchParams }: SearchParamsProps) => {
       </section>
 
       <div className="mt-10">
-        <Suspense fallback={null}>
+        <Suspense fallback={<div>Loading Pagination...</div>}>
           <Pagination
             pageNumber={searchParams?.page ? +searchParams.page : 1}
             isNext={isNext}

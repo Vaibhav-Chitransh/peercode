@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import GithubCard from "@/components/dashboard/github/GithubCard";
 import { URLProps } from "@/types";
 import NoData from "@/components/dashboard/NoData";
+import { Suspense } from "react";
 
 const page = async ({ params, searchParams }: URLProps) => {
   const filter = searchParams.filter;
@@ -40,13 +41,17 @@ const page = async ({ params, searchParams }: URLProps) => {
   return (
     <div>
       <div className="mb-4">
-        <Filter
-          filters={DashboardPageFilters}
-          otherClasses="min-h-[56px] sm:min-w-[170px]"
-          containerClasses="hidden max-md:flex"
-        />
+        <Suspense fallback={<div>Loading Filters...</div>}>
+          <Filter
+            filters={DashboardPageFilters}
+            otherClasses="min-h-[56px] sm:min-w-[170px]"
+            containerClasses="hidden max-md:flex"
+          />
+        </Suspense>
 
-        <DashboardFilters />
+        <Suspense fallback={<div>Loading Dashboard Filters...</div>}>
+          <DashboardFilters />
+        </Suspense>
       </div>
 
       {filter === "codeforces" ? (

@@ -1,4 +1,4 @@
-"use client"; // because we are using onClick
+"use client";
 import React from "react";
 import { Button } from "../ui/button";
 import { formURLQuery } from "@/lib/utils";

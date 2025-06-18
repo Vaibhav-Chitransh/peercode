@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { getQuestionById } from "@/lib/actions/question.action";
-import React from "react";
+import React, { Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Metric from "@/components/shared/Metric";
@@ -18,8 +18,7 @@ import AllAnswer from "@/components/shared/AllAnswer";
 import Votes from "@/components/shared/Votes";
 import { URLProps } from "@/types";
 
-
-const page = async ({ params ,searchParams}: URLProps) => {
+const page = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkId } = await auth();
   let mongoUser;
   if (clerkId) {
@@ -50,16 +49,18 @@ const page = async ({ params ,searchParams}: URLProps) => {
             </p>
           </Link>
           <div className="flex justify-end">
-            <Votes
-              type="Question"
-              itemId={JSON.stringify(result._id)}
-              userId={JSON.stringify(mongoUser?._id)}
-              upvotes={result.upvotes.length}
-              hasupVoted={result.upvotes.includes(mongoUser?._id)}
-              downvotes={result.downvotes.length}
-              hasdownVoted={result.downvotes.includes(mongoUser?._id)}
-              hasSaved={mongoUser?.saved.includes(result._id)}
-            />
+            <Suspense fallback={<div>Loading Votes...</div>}>
+              <Votes
+                type="Question"
+                itemId={JSON.stringify(result._id)}
+                userId={JSON.stringify(mongoUser?._id)}
+                upvotes={result.upvotes.length}
+                hasupVoted={result.upvotes.includes(mongoUser?._id)}
+                downvotes={result.downvotes.length}
+                hasdownVoted={result.downvotes.includes(mongoUser?._id)}
+                hasSaved={mongoUser?.saved.includes(result._id)}
+              />
+            </Suspense>
           </div>
         </div>
         <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
@@ -115,23 +116,13 @@ const page = async ({ params ,searchParams}: URLProps) => {
         filter={searchParams?.filter}
       />
 
-      <Answer
-        question={result.content}
-        questionId={JSON.stringify(result._id)}
-        authorId={JSON.stringify(mongoUser?._id)}
-      />
-
-      {/* <AllAnswer
-        questionId={result._id}
-        userId={"683d5f297420831e450aaae7"}
-        totalAnswers={result.answers.length}
-      /> */}
-
-      {/* <Answer
-        question={result.content}
-        questionId={String(result._id)}
-        authorId={"683d5f297420831e450aaae7"}
-      /> */}
+      <Suspense fallback={<div>Loading Answer Form...</div>}>
+        <Answer
+          question={result.content}
+          questionId={JSON.stringify(result._id)}
+          authorId={JSON.stringify(mongoUser?._id)}
+        />
+      </Suspense>
     </>
   );
 };

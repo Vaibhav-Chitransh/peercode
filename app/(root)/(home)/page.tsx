@@ -68,7 +68,7 @@ const Home = async (
       </div>
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
-        <Suspense fallback={null}>
+        <Suspense fallback={<div>Loading Search Bar...</div>}>
           <LocalSearchbar
             route="/"
             iconPosition="left"
@@ -78,7 +78,7 @@ const Home = async (
           />
         </Suspense>
 
-        <Suspense fallback={null}>
+        <Suspense fallback={<div>Loading Filters...</div>}>
           <Filter
             filters={HomePageFilters}
             otherClasses="min-h-[56px] sm:min-w-[170px]"
@@ -118,7 +118,7 @@ const Home = async (
         )}
       </div>
       <div className="mt-10">
-        <Suspense fallback={null}>
+        <Suspense fallback={<div>Loading Pagination...</div>}>
           <Pagination pageNumber={page} isNext={result.isNext} />
         </Suspense>
       </div>

@@ -15,8 +15,7 @@ import {
 import { getGithubStats } from "@/lib/dashboardData";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import React from "react";
+import React, { Suspense } from "react";
 
 type ErrorObject = {
   error: string;
@@ -40,7 +39,7 @@ const Page = async ({
 
   const { results: users } = await getAllUsers({
     searchQuery: searchParams.q,
-    page:1,
+    page: 1,
   });
 
   // console.log({ users });
@@ -54,22 +53,20 @@ const Page = async ({
         user.codeforcesId
           ? getCodeforcesStats(user.codeforcesId)
           : { error: "No Codeforces ID" },
-         user.githubId
+        user.githubId
           ? getGithubStats(user.githubId)
           : { error: "No GitHub ID" },
       ]);
 
-      
-
       let leetcodeScore = 0;
       let codeforcesScore = 0;
-      let gitScore=0;
-      if(!("error" in gitStats)){
-       gitScore=
-       (Number(gitStats?.totalCommits) || 0)/5 +
-       (Number(gitStats?.totalPRs) || 0)/2;
+      let gitScore = 0;
+      if (!("error" in gitStats)) {
+        gitScore =
+          (Number(gitStats?.totalCommits) || 0) / 5 +
+          (Number(gitStats?.totalPRs) || 0) / 2;
       }
-      
+
       if (!("error" in lcStats)) {
         leetcodeScore =
           (Number(lcStats?.Easy) || 0) / 2 +
@@ -97,13 +94,15 @@ const Page = async ({
           codeforcesScore += Number((lastContest.newRating - 800) / 2);
         }
       }
-     
-      const pScore = filter==="overall"
-      ? Number(leetcodeScore + gitScore + codeforcesScore)
-      :filter ==="leetcode" ? Number(leetcodeScore)
-      :filter ==="github" ? Number(gitScore)
-      :Number(codeforcesScore);
-      
+
+      const pScore =
+        filter === "overall"
+          ? Number(leetcodeScore + gitScore + codeforcesScore)
+          : filter === "leetcode"
+            ? Number(leetcodeScore)
+            : filter === "github"
+              ? Number(gitScore)
+              : Number(codeforcesScore);
 
       return {
         _id: user._id,
@@ -122,15 +121,13 @@ const Page = async ({
     })
   );
 
-//     const check= await verifyLeetcodeProfile("naveenchhipa","peer-verify");
-//     console.log("leetcode",check);
+  //     const check= await verifyLeetcodeProfile("naveenchhipa","peer-verify");
+  //     console.log("leetcode",check);
 
-// const token = "xyz"; // the exact text user added in "About Me"
-// console.log("token",token)
-// const verified = await verifyCodeforcesProfile(handle, token);
-// console.log("Codeforces Verified:", verified);
-
-
+  // const token = "xyz"; // the exact text user added in "About Me"
+  // console.log("token",token)
+  // const verified = await verifyCodeforcesProfile(handle, token);
+  // console.log("Codeforces Verified:", verified);
 
   leaderboardData.sort((a, b) => {
     if (filter === "leetcode") {
@@ -143,7 +140,6 @@ const Page = async ({
       return b.gitScore - a.gitScore;
     }
 
-
     if (filter === "codeforces") {
       if (b.codeforcesScore != a.codeforcesScore) {
         return b.codeforcesScore - a.codeforcesScore;
@@ -151,18 +147,18 @@ const Page = async ({
       if (b.leetcodeScore != a.leetcodeScore) {
         return b.leetcodeScore - a.leetcodeScore;
       }
-       return b.gitScore - a.gitScore;
+      return b.gitScore - a.gitScore;
     }
 
-     if (filter === "github") {
+    if (filter === "github") {
       if (b.gitScore != a.gitScore) {
         return b.gitScore - a.gitScore;
       }
       if (b.codeforcesScore != a.codeforcesScore) {
         return b.codeforcesScore - a.codeforcesScore;
       }
-      
-       return b.leetcodeScore - a.leetcodeScore;
+
+      return b.leetcodeScore - a.leetcodeScore;
     }
 
     // Default: "overall"
@@ -177,7 +173,7 @@ const Page = async ({
       return b.codeforcesScore - a.codeforcesScore;
     }
 
-     if (b.leetcodeScore !== a.leetcodeScore) {
+    if (b.leetcodeScore !== a.leetcodeScore) {
       return b.leetcodeScore - a.leetcodeScore;
     }
 
@@ -193,66 +189,71 @@ const Page = async ({
   const top3 = leaderboardData.slice(0, 3);
   // const remaining =leaderboardData.slice(3);
   const currentUserIndex = leaderboardData.findIndex(
-       (ele) => ele._id.toString() === mongoUser?._id.toString()
-    );
+    (ele) => ele._id.toString() === mongoUser?._id.toString()
+  );
 
   const currentUser = leaderboardData[currentUserIndex];
   const currentUserRank = currentUserIndex !== -1 ? currentUserIndex + 1 : null;
-    // console.log("current user", currentUser);
-    // top3.map((item) => {
-    //   console.log("items ", item);
-    // });
+  // console.log("current user", currentUser);
+  // top3.map((item) => {
+  //   console.log("items ", item);
+  // });
 
   return (
     <div>
       <div className="flex justify-between mt-3">
-        <LeaderboardFilters/>
-        <Link
-          href="/rating"
-        >
-        <p className="text-sm font-semibold text-primary-500 cursor-pointer mt-3 ">How it works?</p>
+        <Suspense fallback={<div>Loading Filters...</div>}>
+          <LeaderboardFilters />
+        </Suspense>
+        <Link href="/rating">
+          <p className="text-sm font-semibold text-primary-500 cursor-pointer mt-3 ">
+            How it works?
+          </p>
         </Link>
       </div>
 
+      <TopThree top3={top3} />
 
+      <div className="w-full max-w-4xl mx-auto p-4">
+        {/* ----- Current User Card -----  */}
+        {currentUser && (
+          <Link href={`/dashboard/${currentUser.clerkId}`}>
+            <UserLeaderboard
+              currentUser={currentUser}
+              currentUserRank={currentUserRank}
+            />
+          </Link>
+        )}
 
-     <TopThree top3={top3}/> 
-       
-    <div className="w-full max-w-4xl mx-auto p-4">
-  {/* ----- Current User Card -----  */}
-  {currentUser && (
-   
-    <Link href={`/dashboard/${currentUser.clerkId}`}>
-      <UserLeaderboard currentUser={currentUser} currentUserRank={currentUserRank}/>
-    </Link>
-  )}
+        <div className="border border-gray-300 dark:border-dark-400 rounded-[10px]">
+          {/* === Table Header === */}
+          <div className="bg-pink-100 dark:bg-dark-200 text-white flex justify-between py-2 px-4 font-semibold text-sm mb-1 h-11 rounded-t-[10px]">
+            <div className="paragraph-semibold text-dark300_light700 ml-4">
+              User Name
+            </div>
+            <div className="paragraph-semibold text-dark300_light700 mr-10">
+              Rank
+            </div>
+            <div className="paragraph-semibold text-dark300_light700">
+              P Score
+            </div>
+          </div>
 
-
-<div className="border border-gray-300 dark:border-dark-400 rounded-[10px]">
-  {/* === Table Header === */}
-  <div className="bg-pink-100 dark:bg-dark-200 text-white flex justify-between py-2 px-4 font-semibold text-sm mb-1 h-11 rounded-t-[10px]">
-    <div className="paragraph-semibold text-dark300_light700 ml-4">User Name</div>
-    <div className="paragraph-semibold text-dark300_light700 mr-10">Rank</div>
-    <div className="paragraph-semibold text-dark300_light700">P Score</div>
-  </div>
-
-  {/* === Leaderboard List === */}
+          {/* === Leaderboard List === */}
 
           {paginatedLeaderboard.map((user, index) => (
             <Link href={`/dashboard/${user.clerkId}`} key={index}>
-            <LeaderboardList user={user} index={startIndex + index}
-            />
+              <LeaderboardList user={user} index={startIndex + index} />
             </Link>
           ))}
-          </div>
-          <div className="mt-6">
-                
-            <Pagination pageNumber={page} isNext={isNext} />
         </div>
-</div>
-
-</div>
-
+        <div className="mt-6">
+          <Suspense fallback={<div>Loading Pagination...</div>}>
+            <Pagination pageNumber={page} isNext={isNext} />
+          </Suspense>
+        </div>
+      </div>
+    </div>
   );
 };
 

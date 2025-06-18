@@ -3,7 +3,7 @@ import Profile from '@/components/forms/Profile';
 import { getUserById } from '@/lib/actions/user.action';
 import { ParamsProps } from '@/types';
 import { auth } from '@clerk/nextjs/server'
-import React from 'react'
+import React, { Suspense } from 'react'
 
 const page = async ({params}: ParamsProps) => {
   const {userId} = await auth();
@@ -17,7 +17,9 @@ const page = async ({params}: ParamsProps) => {
       <h1 className='h1-bold text-dark100_light900'>Edit Profile</h1>
 
       <div className='mt-9'>
-        <Profile clerkId={userId} user={JSON.stringify(mongoUser)} />
+        <Suspense fallback={<div>Loading Profile...</div>}>
+          <Profile clerkId={userId} user={JSON.stringify(mongoUser)} />
+        </Suspense>
       </div>
     </>
   )

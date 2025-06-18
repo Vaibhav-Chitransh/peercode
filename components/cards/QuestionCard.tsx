@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable tailwindcss/classnames-order */
 import Link from "next/link";
 import React from "react";
