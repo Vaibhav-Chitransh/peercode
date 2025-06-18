@@ -1,3 +1,4 @@
+"use client"
 import { GlobalSearchFilters } from '@/constants/filters'
 import { formURLQuery } from '@/lib/utils';
 import { useSearchParams } from 'next/navigation';
