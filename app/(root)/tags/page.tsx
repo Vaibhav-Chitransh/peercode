@@ -10,10 +10,11 @@ import Pagination from "@/components/shared/Pagination";
 import { Suspense } from "react";
 
 const Tags = async ({ searchParams }: SearchParamsProps) => {
+  const params = await searchParams;
   const { results, isNext } = await getAllTags({
-    searchQuery: searchParams.q,
-    filter: searchParams.filter,
-    page: searchParams.page ? +searchParams.page : 1,
+    searchQuery: params.q,
+    filter: params.filter,
+    page: params.page ? +params.page : 1,
   });
   // console.log({ results });
 
@@ -88,7 +89,7 @@ const Tags = async ({ searchParams }: SearchParamsProps) => {
       <div className="mt-10">
         <Suspense fallback={<div>Loading Pagination...</div>}>
           <Pagination
-            pageNumber={searchParams?.page ? +searchParams.page : 1}
+            pageNumber={params?.page ? +params.page : 1}
             isNext={isNext}
           />
         </Suspense>

@@ -15,11 +15,12 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
   const { userId } = await auth();
   if (!userId) return null;
 
+  const params = await searchParams;
   const { result, isNext } = await getSavedQuestions({
     clerkId: userId,
-    searchQuery: searchParams.q,
-    filter: searchParams.filter,
-    page: searchParams.page ? +searchParams.page : 1,
+    searchQuery: params.q,
+    filter: params.filter,
+    page: params.page ? +params.page : 1,
   });
   // console.log(result);
 
@@ -75,7 +76,7 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
       <div className="mt-10">
         <Suspense fallback={<div>Loading Pagination...</div>}>
           <Pagination
-            pageNumber={searchParams?.page ? +searchParams.page : 1}
+            pageNumber={params?.page ? + params.page : 1}
             isNext={isNext}
           />
         </Suspense>

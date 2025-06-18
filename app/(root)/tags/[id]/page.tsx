@@ -9,10 +9,11 @@ import NoResult from "@/components/shared/NoResult";
 import SearchIcon from "@/assets/icons/search.svg";
 import Pagination from "@/components/shared/Pagination";
 const page = async ({ params, searchParams }: URLProps) => {
+  const sp = await searchParams;
   const result = await getQuestionByTagId({
     tagId: params.id,
-    searchQuery: searchParams.q,
-    page: searchParams.page ? +searchParams.page : 1,
+    searchQuery: sp.q,
+    page: sp.page ? +sp.page : 1,
   });
   return (
     <>
@@ -59,7 +60,7 @@ const page = async ({ params, searchParams }: URLProps) => {
       <div className="mt-10">
         <Suspense fallback={null}>
           <Pagination
-            pageNumber={searchParams?.page ? +searchParams.page : 1}
+            pageNumber={sp?.page ? +sp.page : 1}
             isNext={result.isNext}
           />
         </Suspense>

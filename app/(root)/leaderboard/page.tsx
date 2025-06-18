@@ -28,8 +28,9 @@ const Page = async ({
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-  const filter = searchParams.filter || "overall";
-  const page = Number(searchParams.page) || 1;
+  const params = await searchParams;
+  const filter = params.filter || "overall";
+  const page = Number(params.page) || 1;
   const pageSize = 10;
   const { userId: clerkId } = await auth();
   let mongoUser: { _id: any };
@@ -38,7 +39,7 @@ const Page = async ({
   }
 
   const { results: users } = await getAllUsers({
-    searchQuery: searchParams.q,
+    searchQuery: params.q,
     page: 1,
   });
 
