@@ -12,7 +12,7 @@ import {
 import NavContent from "./NavContent";
 import { SignedOut } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-
+import LogoIcon from '@/assets/icons/logo.png'
 import HamburgerImage from "../../assets/icons/hamburger.svg";
 
 const MobileNav = () => {
@@ -32,7 +32,7 @@ const MobileNav = () => {
         className="background-light900_dark200 border-none bg-white" 
       >
         <Link href="/" className="flex items-center gap-1">
-          <Image src="/globe.svg" width={23} height={23} alt="peercode" />
+          <Image src={LogoIcon} width={40} height={40} alt="peercode" />
           <p className="h2-bold text-dark100_light900 font-spaceGrotesk ">
             Peer<span className="text-primary-500">Code</span>
           </p>
