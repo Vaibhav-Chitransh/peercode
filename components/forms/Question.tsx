@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
-import React, { useRef, useState } from "react";
+import React, { Suspense, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -143,7 +143,8 @@ const Question = ({ type, mongoUserId, questionDetails }: QuestionProps) => {
   };
 
   return (
-    <Form {...form}>
+    <Suspense fallback={<div>Loading Question Form...</div>}>
+      <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex w-full flex-col gap-10"
@@ -297,6 +298,7 @@ const Question = ({ type, mongoUserId, questionDetails }: QuestionProps) => {
         </Button>
       </form>
     </Form>
+    </Suspense>
   );
 };
 

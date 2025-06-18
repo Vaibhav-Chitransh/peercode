@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Button } from "../ui/button";
 import { ProfileSchema } from "@/lib/validations";
 import { usePathname, useRouter } from "next/navigation";
@@ -89,7 +89,8 @@ const Profile = ({ clerkId, user }: Props) => {
   };
 
   return (
-    <Form {...form}>
+    <Suspense fallback={<div>Loading Profile Form...</div>}>
+      <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col w-full mt-9 gap-9"
@@ -170,7 +171,8 @@ const Profile = ({ clerkId, user }: Props) => {
                   />
                   <div>
                     {!parsedUser.leetcodeVerified ? (
-                      <ProfileVerificationDialog
+                      <Suspense fallback={<div>Loading...</div>}>
+                        <ProfileVerificationDialog
                         clerkId={clerkId}
                         platform="leetcode"
                         userId={field.value}
@@ -178,6 +180,7 @@ const Profile = ({ clerkId, user }: Props) => {
                           console.log("Verified successfully!");
                         }}
                       />
+                      </Suspense>
                     ) : (
                       <Image
                         src={TrashIcon}
@@ -213,7 +216,8 @@ const Profile = ({ clerkId, user }: Props) => {
                   />
                   <div>
                     {!parsedUser.codeforcesVerified ? (
-                      <ProfileVerificationDialog
+                      <Suspense fallback={<div>Loading...</div>}>
+                        <ProfileVerificationDialog
                         clerkId={clerkId}
                         platform="codeforces"
                         userId={field.value}
@@ -221,6 +225,7 @@ const Profile = ({ clerkId, user }: Props) => {
                           console.log("Verified successfully!");
                         }}
                       />
+                      </Suspense>
                     ) : (
                       <Image
                         src={TrashIcon}
@@ -256,7 +261,8 @@ const Profile = ({ clerkId, user }: Props) => {
                   />
                   <div>
                     {!parsedUser.githubVerified ? (
-                      <ProfileVerificationDialog
+                      <Suspense fallback={<div>Loading...</div>}>
+                        <ProfileVerificationDialog
                         clerkId={clerkId}
                         platform="github"
                         userId={field.value}
@@ -264,6 +270,7 @@ const Profile = ({ clerkId, user }: Props) => {
                           console.log("Verified successfully!");
                         }}
                       />
+                      </Suspense>
                     ) : (
                       <Image
                         src={TrashIcon}
@@ -330,6 +337,7 @@ const Profile = ({ clerkId, user }: Props) => {
         </div>
       </form>
     </Form>
+    </Suspense>
   );
 };
 
