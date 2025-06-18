@@ -12,13 +12,15 @@ import NoData from "@/components/dashboard/NoData";
 import { Suspense } from "react";
 
 const page = async ({ params, searchParams }: URLProps) => {
-  const filter = searchParams.filter;
+  const sp = await searchParams;
+  const filter = sp.filter;
+  const par = await params;
 
   if (!filter) {
-    redirect(`/dashboard/${params.id}?filter=leetcode`);
+    redirect(`/dashboard/${par.id}?filter=leetcode`);
   }
 
-  const clerkId = params.id;
+  const clerkId = par.id;
   let mongoUser: {
     _id: any;
     leetcodeId?: string;
