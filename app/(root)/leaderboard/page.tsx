@@ -48,13 +48,13 @@ const Page = async ({
   const leaderboardData = await Promise.all(
     users.map(async (user) => {
       const [lcStats, cfStats, gitStats] = await Promise.all([
-        user.leetcodeId
+        user.leetcodeId && user.leetcodeVerified
           ? getLeetCodeStats(user.leetcodeId)
           : { error: "No LeetCode ID" },
-        user.codeforcesId
+        user.codeforcesId && user.codeforcesVerified
           ? getCodeforcesStats(user.codeforcesId)
           : { error: "No Codeforces ID" },
-        user.githubId
+        user.githubId && user.githubVerified
           ? getGithubStats(user.githubId)
           : { error: "No GitHub ID" },
       ]);
