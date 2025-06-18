@@ -1,6 +1,6 @@
 /* eslint-disable tailwindcss/classnames-order */
 import Link from "next/link";
-import React from "react";
+import React, { Suspense } from "react";
 import Metric from "../shared/Metric";
 import LikeIcon from "@/assets/icons/like.svg";
 import MessageIcon from "../../assets/icons/message.svg";
@@ -53,7 +53,9 @@ const QuestionCard = ({
 
         <SignedIn>
           {showActionButtons && (
-            <EditDeleteAction type="Question" itemId={JSON.stringify(_id)} />
+            <Suspense fallback={<div>Loading Actions...</div>}>
+              <EditDeleteAction type="Question" itemId={JSON.stringify(_id)} />
+            </Suspense>
           )}
         </SignedIn>
       </div>

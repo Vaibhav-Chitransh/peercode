@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { getUserAnswers } from "@/lib/actions/user.action";
 import { SearchParamsProps } from "@/types";
 import AnswerCard from "../cards/AnswerCard";

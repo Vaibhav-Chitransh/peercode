@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Filter from "./Filter";
 import { AnswerFilters } from "@/constants/filters";
 import { getAnswer } from "@/lib/actions/answer.action";
@@ -57,7 +57,8 @@ const AllAnswer = async ({ questionId, userId ,page,filter }: Props) => {
                   </div>
                 </Link>
                 <div className="flex justify-end">
-                  <Votes
+                  <Suspense fallback={<div>Loading Votes...</div>}>
+                    <Votes
                     type="Answer"
                     itemId={JSON.stringify(answer._id)}
                     userId={JSON.stringify(userId)}
@@ -66,6 +67,7 @@ const AllAnswer = async ({ questionId, userId ,page,filter }: Props) => {
                     downvotes={answer.downvotes.length}
                     hasdownVoted={answer.downvotes.includes(userId)}
                   />
+                  </Suspense>
                 </div>
               </div>
            

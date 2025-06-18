@@ -87,7 +87,7 @@ const Home = async (
         </Suspense>
       </div>
 
-      <Suspense fallback={null}>
+      <Suspense fallback={<div>Loading Home filters...</div>}>
         <HomeFilters />
       </Suspense>
 

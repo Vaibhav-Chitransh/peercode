@@ -5,6 +5,7 @@ import Metric from "../shared/Metric";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 import { SignedIn } from "@clerk/nextjs";
 import EditDeleteAction from "../shared/EditDeleteAction";
+import { Suspense } from "react";
 
 interface Props {
   clerkId?: string | null;
@@ -50,7 +51,9 @@ const AnswerCard = ({
 
         <SignedIn>
           {showActionButtons && (
-            <EditDeleteAction type="Answer" itemId={JSON.stringify(_id)} />
+            <Suspense fallback={<div>Loading Actions...</div>}>
+              <EditDeleteAction type="Answer" itemId={JSON.stringify(_id)} />
+            </Suspense>
           )}
         </SignedIn>
       </div>
