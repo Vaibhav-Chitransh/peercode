@@ -7,6 +7,7 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import '../styles/prism.css';
 import { ThemeProvider } from "@/context/ThemeProvider";
+import { Suspense } from "react";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -48,7 +49,11 @@ export default function RootLayout({
           }}
           afterSignOutUrl='/sign-in'
         >
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <Suspense fallback={<div>Loading...</div>}>
+              {children}
+            </Suspense>
+          </ThemeProvider>
         </ClerkProvider>
       </body>
     </html>
