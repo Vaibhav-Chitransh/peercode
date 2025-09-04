@@ -137,6 +137,35 @@ Fully optimized for mobile devices with touch-friendly interfaces.
   - Achievement recognition
   - Competitive programming integration
 
+
+## 🧪 Load Testing
+
+To validate the performance and scalability of **PeerCode**, load testing was conducted using [Loader.io](https://loader.io).  
+The application was tested across **core features** — Home page, Dashboard, and Leaderboard — with **100 concurrent users**.
+
+### Results Summary
+- ✅ **0% error rate** across all tests  
+- ⚡ Average response times:
+  - Home Page → ~1.4s  
+  - Dashboard → ~2.2s  
+  - Leaderboard → ~3.5s  
+
+---
+
+### 📊 Test Results
+
+#### Home Page
+![Home Page Test](./assets/pics_for_readme_file/home_test.png)
+
+#### Dashboard
+![Dashboard Test](./assets/pics_for_readme_file/dashboard_test.png)
+
+#### Leaderboard
+![Leaderboard Test](./assets/pics_for_readme_file/leaderboard_test.png)
+
+
+
+
 ## 🚀 Getting Started
 
 ### Prerequisites
